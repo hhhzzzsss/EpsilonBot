@@ -258,13 +258,13 @@ public class PlotBuilderSession {
         // If awaitWE, don't immediately poll command and wait for WEFinished flag
         // WECooldown will cause it to re-run the awaited command if it doesn't detect any updates in 10 time ticks
         if (action.awaitWE && WEFinished) {
-            WECooldown = 2;
+            WECooldown = 1; // Set to 1 because CommandHandler will already guarantee a minimum 1000 delay
             WEFinished = false;
             actionQueue.poll();
         } else if (WECooldown <= 0) {
             bot.sendCommand(action.command);
             if (!action.awaitWE) {
-                WECooldown = 2;
+                WECooldown = 1; // Set to 1 because CommandHandler will already guarantee a minimum 1000 delay
                 actionQueue.poll();
             } else {
                 WECooldown = 10;
@@ -290,7 +290,7 @@ public class PlotBuilderSession {
     }
 
     int getFirstLayerDifference() {
-        int[] builtCache = new int[LAYER_LIMIT];
+        int[] builtCache = new int[LAYER_LIMIT+1];
         for (int layer = LAYER_LIMIT-1; layer >= 0; layer--) {
             builtCache[layer] = Math.max(0, getLayerRequiredBlocks(layer)-getLayerDifferences(layer));
             if (layer < LAYER_LIMIT-1) {
@@ -299,7 +299,7 @@ public class PlotBuilderSession {
         }
         for (int layer = 0; layer < LAYER_LIMIT; layer++) {
             int differences = getLayerDifferences(layer);
-            if (differences > builtCache[layer] / 10) {
+            if (differences > builtCache[layer+1] / 10) {
                 return layer;
             } else {
 //                removeDifferencesWithWorldEdit(layer);
