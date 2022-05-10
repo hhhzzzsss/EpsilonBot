@@ -1,7 +1,5 @@
 package com.github.hhhzzzsss.epsilonbot.command;
 
-import com.github.hhhzzzsss.epsilonbot.block.BlockSelector;
-import com.github.hhhzzzsss.epsilonbot.entity.EntitySelector;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -87,44 +85,6 @@ public class ArgsParser {
 		}
 		catch (IllegalArgumentException|NullPointerException e) {
 			throw getError(enumType.getSimpleName());
-		}
-	}
-	
-	public EntitySelector readEntitySelector(boolean required) throws CommandException {
-		String arg = findPattern(wordPattern);
-		if (arg == null) {
-			if (required) {
-				throw getError("entity selector");
-			}
-			else {
-				return null;
-			}
-		}
-		
-		try {
-			return new EntitySelector(arg);
-		}
-		catch (IllegalArgumentException e) {
-			throw getCustomError("Invalid entity in selector");
-		}
-	}
-	
-	public BlockSelector readBlockSelector(boolean required) throws CommandException {
-		String arg = findPattern(wordPattern);
-		if (arg == null) {
-			if (required) {
-				throw getError("block selector");
-			}
-			else {
-				return null;
-			}
-		}
-		
-		try {
-			return new BlockSelector(arg);
-		}
-		catch (IllegalArgumentException e) {
-			throw getCustomError(e.getMessage());
 		}
 	}
 	
