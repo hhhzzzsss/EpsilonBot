@@ -1,0 +1,8 @@
+host: play.totalfreedom.me
+port: 25565
+username: username_goes_here
+password: password_goes_here
+buildSyncX: 2021952
+buildSyncZ: 17080800
+trusted:
+  - 5752bde5-bbf7-46e7-8352-59a9d5bc3c2f
