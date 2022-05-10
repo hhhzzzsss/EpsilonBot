@@ -40,9 +40,6 @@ public class RepairCommand implements ChatCommand {
     @Override
     public void executeChat(ChatSender sender, String args) throws CommandException {
         PlotBuilder plotBuilder = bot.getPlotBuilder();
-        if (plotBuilder.getPlotBuilderSession() != null) {
-            throw new CommandException("Another build is currently in progress so I can't interrupt");
-        }
         for (Plot plot : PlotManager.getPlotMap().values()) {
             if (plot.isSaved() && plot.getName().equalsIgnoreCase(args)) {
                 if (!PlotManager.getBuildStatus(plot.pos).isBuilt()) {
@@ -50,7 +47,11 @@ public class RepairCommand implements ChatCommand {
                 }
                 try {
                     Section section = PlotManager.loadSchem(plot.pos);
-                    bot.sendChat("Repairing \"" + plot.getName() + "\"...");
+                    if (plotBuilder.getPlotBuilderSession() != null) {
+                        bot.sendChat("Another build is in progress. Interrupting that build to repair \"" + plot.getName() + "\"...");
+                    } else {
+                        bot.sendChat("Repairing \"" + plot.getName() + "\"...");
+                    }
                     plotBuilder.setPlotBuilderSession(new PlotRepairSession(bot, section, plot.pos, plot.getName()));
                 } catch (IOException e) {
                     throw new CommandException(e.getMessage());
