@@ -536,7 +536,7 @@ public class PlotBuilderSession {
         for (int layer=0; layer<currentLayer; layer++) {
             progress += getLayerRequiredBlocks(layer);
         }
-        progress += Math.max(currentLayerProgress, getLayerRequiredBlocks(currentLayer));
+        progress += Math.min(currentLayerProgress, getLayerRequiredBlocks(currentLayer));
         return progress;
     }
 
