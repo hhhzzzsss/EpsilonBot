@@ -297,6 +297,10 @@ public class PlotBuilderSession {
                 builtCache[layer] += builtCache[layer+1];
             }
         }
+        // Avoid skipping first layer if there's just a few blocks placed above
+        if (builtCache[1] < 20) {
+            return 0;
+        }
         for (int layer = 0; layer < LAYER_LIMIT; layer++) {
             int differences = getLayerDifferences(layer);
             if (differences > builtCache[layer+1] / 10) {
