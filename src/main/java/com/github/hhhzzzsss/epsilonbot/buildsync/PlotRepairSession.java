@@ -2,7 +2,7 @@ package com.github.hhhzzzsss.epsilonbot.buildsync;
 
 import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
 import com.github.hhhzzzsss.epsilonbot.block.Section;
-import com.github.hhhzzzsss.epsilonbot.buildsync.action.WECommandAction;
+import com.github.hhhzzzsss.epsilonbot.build.action.CommandAction;
 import com.github.hhhzzzsss.epsilonbot.util.BlockUtils;
 import com.github.hhhzzzsss.epsilonbot.util.PlotUtils;
 
@@ -17,10 +17,7 @@ public class PlotRepairSession extends PlotBuilderSession {
     public void onAction() {
         // Teleport back if left plot
         if (!PlotUtils.isInPlot(bot.getPosManager().getX(), bot.getPosManager().getZ(), plotCoord)) {
-            if (teleportCooldown <= 0) {
-                sendStartingPositionTpCommand();
-                teleportCooldown = 20;
-            }
+            tryTeleport(originX + PlotUtils.PLOT_DIM/2, PlotUtils.PLOT_DIM, originZ + PlotUtils.PLOT_DIM/2, 20);
             return;
         }
 
@@ -28,15 +25,12 @@ public class PlotRepairSession extends PlotBuilderSession {
         if (!firstLoad) {
             if (allChunksLoaded() && bot.getPosManager().getY() >= PlotUtils.PLOT_DIM) {
                 firstLoad = true;
-                actionQueue.add(new WECommandAction(
+                actionQueue.add(new CommandAction(
                         "//limit -1",
                         false));
                 createRepairQueue();
             } else if (!isInStartingPosition()) {
-                if (teleportCooldown <= 0) {
-                    sendStartingPositionTpCommand();
-                    teleportCooldown = 20;
-                }
+                tryTeleport(originX + PlotUtils.PLOT_DIM/2, PlotUtils.PLOT_DIM, originZ + PlotUtils.PLOT_DIM/2, 20);
                 return;
             } else {
                 return;
@@ -46,7 +40,7 @@ public class PlotRepairSession extends PlotBuilderSession {
         if (!actionQueue.isEmpty()) {
             processAction();
         } else {
-            stop(true);
+            stop();
         }
     }
 
@@ -65,13 +59,13 @@ public class PlotRepairSession extends PlotBuilderSession {
                     }
                     if (!blockName.equals(targetBlockName)) {
                         totalDifferences++;
-                        actionQueue.add(new WECommandAction(
+                        actionQueue.add(new CommandAction(
                                 String.format("//pos1 %d,%d,%d", bx, by, bz),
                                 false));
-                        actionQueue.add(new WECommandAction(
+                        actionQueue.add(new CommandAction(
                                 String.format("//pos2 %d,%d,%d", bx, by, bz),
                                 false));
-                        actionQueue.add(new WECommandAction(
+                        actionQueue.add(new CommandAction(
                                 String.format("//set %s", section.getBlock(x, y, z)),
                                 true));
                     }

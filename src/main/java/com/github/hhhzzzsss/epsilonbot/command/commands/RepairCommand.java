@@ -44,7 +44,7 @@ public class RepairCommand implements ChatCommand {
             return;
         }
 
-        BuildHandler plotBuilder = bot.getPlotBuilder();
+        BuildHandler plotBuilder = bot.getBuildHandler();
         for (Plot plot : PlotManager.getPlotMap().values()) {
             if (plot.isSaved() && plot.getName().equalsIgnoreCase(args)) {
                 if (!PlotManager.getBuildStatus(plot.pos).isBuilt()) {

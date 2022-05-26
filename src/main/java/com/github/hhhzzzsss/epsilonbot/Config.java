@@ -24,6 +24,8 @@ public class Config {
     String password;
     int buildSyncX;
     int buildSyncZ;
+    int mapartX;
+    int mapartZ;
     ArrayList<String> trusted;
 
     static {

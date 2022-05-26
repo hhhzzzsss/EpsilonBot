@@ -56,7 +56,7 @@ public class EpsilonBot {
 	@Getter protected World world = new World(this);
 	@Getter protected CommandList commandList = new CommandList();
 	@Getter protected ChatCommandHandler chatCommandHandler = new ChatCommandHandler(this, commandList, "`");
-	@Getter protected PlotBuilder plotBuilder = new PlotBuilder(this);
+	@Getter protected BuildHandler buildHandler = new BuildHandler(this);
 	
 	public EpsilonBot() {
 		this.host = Config.getConfig().getHost();
@@ -321,6 +321,7 @@ public class EpsilonBot {
 		commandList.add(new BuildStatusCommand(this));
 		commandList.add(new ReloadIndexCommand(this));
 		commandList.add(new RepairCommand(this));
+		commandList.add(new MapartCommand(this));
 
 		commandList.add(new RestartCommand(this));
 		commandList.add(new StopCommand(this));

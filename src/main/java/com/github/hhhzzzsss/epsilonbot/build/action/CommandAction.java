@@ -3,10 +3,10 @@ package com.github.hhhzzzsss.epsilonbot.build.action;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class WECommandAction extends Action {
+public class CommandAction extends Action {
     @Override
     public ActionType getActionType() {
-        return ActionType.WE_COMMAND;
+        return ActionType.COMMAND;
     }
 
     public final String command;

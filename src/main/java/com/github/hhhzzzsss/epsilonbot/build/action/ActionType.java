@@ -1,10 +1,10 @@
-package com.github.hhhzzzsss.epsilonbot.buildsync.action;
+package com.github.hhhzzzsss.epsilonbot.build.action;
 
 public enum ActionType {
     MOVE,
     HOLD,
     PLACE,
-    WE_COMMAND,
+    COMMAND,
     AWAIT_CHUNKS,
     WAIT,
 }

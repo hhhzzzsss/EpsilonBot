@@ -4,49 +4,36 @@ import com.github.hhhzzzsss.epsilonbot.Config;
 import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
 import com.github.hhhzzzsss.epsilonbot.block.Section;
 import com.github.hhhzzzsss.epsilonbot.block.World;
-import com.github.hhhzzzsss.epsilonbot.buildsync.action.*;
-import com.github.hhhzzzsss.epsilonbot.modules.PositionManager;
+import com.github.hhhzzzsss.epsilonbot.build.BuilderSession;
+import com.github.hhhzzzsss.epsilonbot.build.action.*;
 import com.github.hhhzzzsss.epsilonbot.util.BlockUtils;
 import com.github.hhhzzzsss.epsilonbot.util.ItemUtils;
 import com.github.hhhzzzsss.epsilonbot.util.PlotUtils;
-import com.github.hhhzzzsss.epsilonbot.util.Vec3d;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundSetCreativeModeSlotPacket;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public class PlotBuilderSession {
+public class PlotBuilderSession extends BuilderSession {
     public static final String FLOOR_BLOCK = "glass";
     public static final int LAYER_LIMIT = (PlotUtils.PLOT_DIM+1) / 2;
-    public static final Pattern WE_PROGRESS_PATTERN = Pattern.compile("\\s*You have \\S+ blocks queued. Placing speed: \\S+, \\S+ left.\\s*");
-    public static final Pattern WE_DONE_PATTERN = Pattern.compile("\\s*Job \\[\\S+\\] \\S+ - done\\s*");
 
-    public final EpsilonBot bot;
     public final Section section;
     public final PlotCoord plotCoord;
     public final String plotName;
     public final int originX;
     public final int originZ;
-    @Getter private boolean finished = false;
-    @Getter private boolean stopped = false;
 
     int currentLayerProgress = 0;
 
-    Queue<Action> actionQueue = new LinkedList<>();
-
     boolean firstLoad = false;
     int currentLayer = 0;
-    int WECooldown = 0;
-    boolean WEFinished = false;
-    int waitTime = 0;
-    boolean waiting = true;
+
+    @Getter private boolean finished = false;
 
     public PlotBuilderSession(EpsilonBot bot, Section section, PlotCoord plotCoord, String plotName) {
-        this.bot = bot;
+        super(bot);
         this.section = section;
         this.plotCoord = plotCoord;
         this.plotName = plotName;
@@ -54,13 +41,11 @@ public class PlotBuilderSession {
         this.originZ = plotCoord.getZ() * PlotUtils.PLOT_DIM + Config.getConfig().getBuildSyncZ();
     }
 
+    @Override
     public void onAction() {
         // Teleport back if left plot
         if (!PlotUtils.isInPlot(bot.getPosManager().getX(), bot.getPosManager().getZ(), plotCoord)) {
-            if (teleportCooldown <= 0) {
-                sendStartingPositionTpCommand();
-                teleportCooldown = 20;
-            }
+            tryTeleport(originX + PlotUtils.PLOT_DIM/2, PlotUtils.PLOT_DIM, originZ + PlotUtils.PLOT_DIM/2, 20);
             return;
         }
 
@@ -68,16 +53,13 @@ public class PlotBuilderSession {
         if (!firstLoad) {
             if (allChunksLoaded() && bot.getPosManager().getY() >= PlotUtils.PLOT_DIM) {
                 firstLoad = true;
-                actionQueue.add(new WECommandAction(
+                actionQueue.add(new CommandAction(
                         "//limit -1",
                         false));
                 currentLayer = getFirstLayerDifference();
                 doInitialSets();
             } else if (!isInStartingPosition()) {
-                if (teleportCooldown <= 0) {
-                    sendStartingPositionTpCommand();
-                    teleportCooldown = 20;
-                }
+                tryTeleport(originX + PlotUtils.PLOT_DIM/2, PlotUtils.PLOT_DIM, originZ + PlotUtils.PLOT_DIM/2, 20);
                 return;
             } else {
                 return;
@@ -93,46 +75,26 @@ public class PlotBuilderSession {
             } else {
                 while (getLayerDifferences(currentLayer) == 0 && currentLayer < LAYER_LIMIT) {
                     if (currentLayer == 0) {
-                        actionQueue.add(new WECommandAction(
+                        actionQueue.add(new CommandAction(
                                 String.format("//pos1 %d,0,%d", originX, originZ),
                                 false));
-                        actionQueue.add(new WECommandAction(
+                        actionQueue.add(new CommandAction(
                                 String.format("//pos2 %d,0,%d", originX+PlotUtils.PLOT_DIM-1, originZ+PlotUtils.PLOT_DIM-1),
                                 false));
-                        actionQueue.add(new WECommandAction(
+                        actionQueue.add(new CommandAction(
                                 String.format("//replace air %s", FLOOR_BLOCK),
                                 true));
                     }
                     currentLayer++;
                 }
                 if (currentLayer >= LAYER_LIMIT) {
-                    stop(true);
+                    finished = true;
+                    stop();
                 } else {
                     updateCurrentLayerProgress();
                     loadLayer();
                 }
             }
-        }
-    }
-
-    int teleportCooldown = 0;
-    public void onTimePacket() {
-        if (teleportCooldown > 0) {
-            teleportCooldown--;
-        }
-        if (WECooldown > 0) {
-            WECooldown--;
-        }
-        if (waiting) {
-            waitTime++;
-        }
-    }
-
-    public void onChat(String message) {
-        if (WE_PROGRESS_PATTERN.matcher(message).matches()) {
-            WECooldown = 10;
-        } else if (WE_DONE_PATTERN.matcher(message).matches()) {
-            WEFinished = true;
         }
     }
 
@@ -164,83 +126,8 @@ public class PlotBuilderSession {
         }
     }
 
-    void sendStartingPositionTpCommand() {
-        bot.sendCommand(String.format(
-                "/tp %d %d %d",
-                originX + PlotUtils.PLOT_DIM/2,
-                PlotUtils.PLOT_DIM,
-                originZ + PlotUtils.PLOT_DIM/2)
-        );
-    }
-
-    void processAction() {
-        Action action = actionQueue.peek();
-        if (action.getActionType() == ActionType.MOVE) {
-            processMove((MoveAction) action);
-        } else if (action.getActionType() == ActionType.HOLD) {
-            processHold((HoldAction) action);
-        } else if (action.getActionType() == ActionType.PLACE) {
-            processPlace((PlaceAction) action);
-        } else if (action.getActionType() == ActionType.WE_COMMAND) {
-            processWECommand((WECommandAction) action);
-        } else if (action.getActionType() == ActionType.AWAIT_CHUNKS) {
-            processAwaitChunks();
-        } else if (action.getActionType() == ActionType.WAIT) {
-            processWait((WaitAction) action);
-        }
-    }
-
-    void processMove(MoveAction action) {
-        PositionManager posManager = bot.getPosManager();
-        Vec3d actionPos = new Vec3d(action.x, action.y, action.z);
-        Vec3d currentPos = new Vec3d(posManager.getX(), posManager.getY(), posManager.getZ());
-        Vec3d targetPos;
-        if (currentPos.y != action.y) {
-            if (Math.abs(action.y - currentPos.y) <= 2.5) {
-                targetPos = new Vec3d(currentPos.x, action.y, currentPos.z);
-            } else if (action.y > currentPos.y) {
-                targetPos = new Vec3d(currentPos.x, currentPos.y+2.5, currentPos.z);
-            } else {
-                targetPos = new Vec3d(currentPos.x, currentPos.y-2.5, currentPos.z);
-            }
-        } else {
-            Vec3d difVec = actionPos.subtract(currentPos);
-            if (difVec.lengthSquared() > 9) {
-                targetPos = currentPos.add(difVec.normalize().multiply(3));
-            } else {
-                targetPos = actionPos;
-            }
-        }
-        // Block intersection bounds
-        World world = bot.getWorld();
-        int minIX = (int) Math.floor(targetPos.x - 0.3);
-        int maxIX = (int) Math.floor(targetPos.x + 0.3);
-        int minIZ = (int) Math.floor(targetPos.z - 0.3);
-        int maxIZ = (int) Math.floor(targetPos.z + 0.3);
-        int minIY = (int) Math.floor(targetPos.y);
-        int maxIY = (int) Math.floor(targetPos.y + 1.8);
-        for (int y = minIY; y <= maxIY; y++) {
-            for (int z = minIZ; z <= maxIZ; z++) {
-                for (int x = minIX; x <= maxIX; x++) {
-                    if (!BlockUtils.isAir(world.getBlock(x, y, z))) {
-                        world.breakBlock(x, y, z);
-                        return;
-                    }
-                }
-            }
-        }
-        posManager.move(targetPos.x, targetPos.y, targetPos.z);
-        if (targetPos.equals(actionPos)) {
-            actionQueue.poll();
-        }
-    }
-
-    void processHold(HoldAction action) {
-        bot.sendPacket(new ServerboundSetCreativeModeSlotPacket(36, new ItemStack(action.itemId)));
-        actionQueue.poll();
-    }
-
-    void processPlace(PlaceAction action) {
+    @Override
+    protected void processPlace(PlaceAction action) {
         if (bot.getWorld().inLoadedChunk(action.x, action.z)) {
             if (action.stateId == 0) {
                 bot.getWorld().breakBlock(action.x, action.y, action.z);
@@ -250,41 +137,6 @@ public class PlotBuilderSession {
                     currentLayerProgress++;
                 }
             }
-            actionQueue.poll();
-        }
-    }
-
-    void processWECommand(WECommandAction action) {
-        // If awaitWE, don't immediately poll command and wait for WEFinished flag
-        // WECooldown will cause it to re-run the awaited command if it doesn't detect any updates in 10 time ticks
-        if (action.awaitWE && WEFinished) {
-            WECooldown = 1; // Set to 1 because CommandHandler will already guarantee a minimum 1000 delay
-            WEFinished = false;
-            actionQueue.poll();
-        } else if (WECooldown <= 0) {
-            bot.sendCommand(action.command);
-            if (!action.awaitWE) {
-                WECooldown = 1; // Set to 1 because CommandHandler will already guarantee a minimum 1000 delay
-                actionQueue.poll();
-            } else {
-                WECooldown = 10;
-            }
-        }
-    }
-
-    void processAwaitChunks() {
-        if (allChunksLoaded()) {
-            actionQueue.poll();
-        }
-    }
-
-    void processWait(WaitAction action) {
-        if (!waiting) {
-            waiting = true;
-            waitTime = 0;
-        } else if (waitTime >= action.duration) {
-            waiting = false;
-            waitTime = 0;
             actionQueue.poll();
         }
     }
@@ -333,33 +185,6 @@ public class PlotBuilderSession {
         return differences;
     }
 
-//    void removeDifferencesWithWorldEdit(int layer) {
-//        for (int y = layer*2; y<=layer*2+1 && y < PlotUtils.PLOT_DIM; y++) {
-//            for (int z = 0; z < PlotUtils.PLOT_DIM; z++) {
-//                for (int x = 0; x < PlotUtils.PLOT_DIM; x++) {
-//                    int bx = x + originX;
-//                    int by = y;
-//                    int bz = z + originZ;
-//                    int blockState = bot.getWorld().getBlock(bx, by, bz);
-//                    String blockName = BlockUtils.getBlockByStateId(blockState).getName();
-//                    if (y == 0 && section.getBlock(x, y, z).equals("air") && blockName.equals(FLOOR_BLOCK)) {
-//                        continue;
-//                    } else if (!section.getBlock(x, y, z).equals(blockName)) {
-//                        actionQueue.add(new WECommandAction(
-//                                String.format("//pos1 %d,%d,%d", bx, by, bz),
-//                                false));
-//                        actionQueue.add(new WECommandAction(
-//                                String.format("//pos2 %d,%d,%d", bx, by, bz),
-//                                false));
-//                        actionQueue.add(new WECommandAction(
-//                                String.format("//set %s", section.getBlock(x, y, z)),
-//                                true));
-//                    }
-//                }
-//            }
-//        }
-//    }
-
     void doInitialSets() {
         HashSet<Integer> requiredLayers = new HashSet<>();
         for (int y = currentLayer*2; y < PlotUtils.PLOT_DIM; y++) {
@@ -378,13 +203,13 @@ public class PlotBuilderSession {
             }
         }
         for (int layer : requiredLayers) {
-            actionQueue.add(new WECommandAction(
+            actionQueue.add(new CommandAction(
                     String.format("//pos1 %d,%d,%d", originX, layer*2, originZ),
                     false));
-            actionQueue.add(new WECommandAction(
+            actionQueue.add(new CommandAction(
                     String.format("//pos2 %d,%d,%d", originX+PlotUtils.PLOT_DIM-1, layer*2 + 1, originZ+PlotUtils.PLOT_DIM-1),
                     false));
-            actionQueue.add(new WECommandAction(
+            actionQueue.add(new CommandAction(
                     "//set air",
                     true));
         }
@@ -555,10 +380,5 @@ public class PlotBuilderSession {
                 (double) currentProgress / totalBlocks * 100.0,
                 (totalBlocks - currentProgress) / 15. / 60. / 60.
         ));
-    }
-
-    public void stop(boolean finished) {
-        this.finished = finished;
-        this.stopped = true;
     }
 }
