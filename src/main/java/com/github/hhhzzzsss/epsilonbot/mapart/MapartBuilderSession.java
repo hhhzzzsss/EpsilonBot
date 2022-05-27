@@ -3,10 +3,7 @@ package com.github.hhhzzzsss.epsilonbot.mapart;
 import com.github.hhhzzzsss.epsilonbot.Config;
 import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
 import com.github.hhhzzzsss.epsilonbot.build.BuilderSession;
-import com.github.hhhzzzsss.epsilonbot.build.action.HoldAction;
-import com.github.hhhzzzsss.epsilonbot.build.action.MoveAction;
-import com.github.hhhzzzsss.epsilonbot.build.action.PlaceAction;
-import com.github.hhhzzzsss.epsilonbot.build.action.CommandAction;
+import com.github.hhhzzzsss.epsilonbot.build.action.*;
 import com.github.hhhzzzsss.epsilonbot.util.BlockUtils;
 import com.github.hhhzzzsss.epsilonbot.util.ItemUtils;
 import lombok.RequiredArgsConstructor;
@@ -75,6 +72,7 @@ public class MapartBuilderSession extends BuilderSession {
         actionQueue.add(new CommandAction(
                 String.format("/setwarp epsilon_mapart_%d", mapIdx),
                 false));
+        actionQueue.add(new WaitAction(3));
     }
 
     @Override
@@ -115,6 +113,12 @@ public class MapartBuilderSession extends BuilderSession {
             try {
                 loadTile();
             } catch (Throwable e) {
+                e.printStackTrace();
+                try {
+                    MapartBuildState.deleteBuildState();
+                } catch (IOException e2) {
+                    e2.printStackTrace();
+                }
                 bot.sendChat("An unexpected error occured while building mapart. Stopping...");
                 stop();
                 return;
@@ -242,7 +246,7 @@ public class MapartBuilderSession extends BuilderSession {
     }
 
     private void loadTileRepair(int idx) {
-        for (int x=128*idx; x<128*idx+127; x++) {
+        for (int x=128*idx; x<128*idx+128; x++) {
             for (int z = 0; z < 129; z++) {
                 BlockElevation be = blocks[x][z];
                 int bx = originX + x;
@@ -256,6 +260,10 @@ public class MapartBuilderSession extends BuilderSession {
                 }
                 String blockName = BlockUtils.getBlockByStateId(bot.getWorld().getBlock(bx, by, bz)).getName();
                 String targetBlockName = be.block;
+                if (ItemUtils.getItemByName(targetBlockName) == null) {
+                    System.out.println("Failed to get block as item: %s" + targetBlockName);
+                    continue;
+                }
                 if (!blockName.equalsIgnoreCase(targetBlockName) || obscured) {
                     int itemId = ItemUtils.getItemByName(targetBlockName).getId();
                     int blockState = BlockUtils.getBlockByName(targetBlockName).getDefaultState();
