@@ -210,7 +210,11 @@ public class MapartLoaderThread extends Thread {
 			double db = b - c.getBlue();
 			double distSq = dr*dr + dg*dg + db*db;
 			if (distSq < minDistSq) {
-				nearest = new BlockElevation(mc.getBlock(), tone, c);
+				String blockName = mc.getBlock();
+				if (blockName.contains("[")) {
+					blockName = blockName.substring(0, blockName.indexOf("["));
+				}
+				nearest = new BlockElevation(blockName, tone, c);
 				minDistSq = distSq;
 			}
 		}
