@@ -19,7 +19,7 @@ public class HelpCommand implements ChatCommand {
     }
     @Override
     public String[] getSyntax() {
-        return new String[] {"[command]"};
+        return new String[] {"[<command>]"};
     }
     @Override
     public String getDescription() {
