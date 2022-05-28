@@ -29,6 +29,8 @@ public class MapartBuilderSession extends BuilderSession {
     int tileIndex = 0;
     boolean tileLoaded = false;
 
+    int tileProgress = 0;
+
     public MapartBuilderSession(EpsilonBot bot, MapartBuildState state) {
         super(bot);
         this.url = state.url;
@@ -132,6 +134,7 @@ public class MapartBuilderSession extends BuilderSession {
         } else {
             tileIndex++;
             tileLoaded = false;
+            tileProgress = 0;
             if (tileIndex >= numTiles*2) {
                 try {
                     MapartBuildState.deleteBuildState();
@@ -142,6 +145,16 @@ public class MapartBuilderSession extends BuilderSession {
                 stop();
                 return;
             }
+        }
+    }
+
+
+
+    @Override
+    protected void processPlace(PlaceAction action) {
+        super.processPlace(action);
+        if (tileIndex < numTiles && action.stateId != 0) {
+            tileProgress++;
         }
     }
 
@@ -298,6 +311,21 @@ public class MapartBuilderSession extends BuilderSession {
     @Override
     public void sendStatusMessage() {
         bot.sendChat("Currently building mapart for: " + url);
-        bot.sendChat("I have not implemented a more detailed status message for mapart yet");
+        if (tileIndex < numTiles) {
+            int totalBlocks = 128*129*numTiles;
+            int totalProgress = 128*129*tileIndex + tileProgress;
+            bot.sendChat(String.format(
+                    "This mapart requires %d block placements in total, and I've placed about %d of them so far, so I'm about %.2f%% done.",
+                    totalBlocks,
+                    totalProgress,
+                    (double) totalProgress / totalBlocks * 100.0
+            ));
+        } else {
+            bot.sendChat(String.format(
+                    "I've finished building but I need to double check the mapart for errors. I'm currently checking tile %d/%d.",
+                    tileIndex-numTiles+1,
+                    numTiles
+            ));
+        }
     }
 }
