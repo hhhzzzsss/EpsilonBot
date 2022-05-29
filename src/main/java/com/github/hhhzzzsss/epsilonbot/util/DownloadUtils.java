@@ -1,5 +1,8 @@
 package com.github.hhhzzzsss.epsilonbot.util;
 
+import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -12,6 +15,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.Iterator;
 
 public class DownloadUtils {
 	
@@ -63,5 +67,31 @@ public class DownloadUtils {
 	
 	public static InputStream DownloadToOutputStream(URL url, int maxSize) throws KeyManagementException, NoSuchAlgorithmException, IOException {
 		return new ByteArrayInputStream(DownloadToByteArray(url, maxSize));
+	}
+
+	public static boolean imageIsSafe(InputStream input) throws IOException {
+		ImageInputStream imageInputStream = ImageIO.createImageInputStream(input);
+		Iterator iter = ImageIO.getImageReaders(imageInputStream);
+		long maxSize = 5000L * 5000L;
+
+		if (!iter.hasNext()) {
+			imageInputStream.close();
+			return false;
+		}
+
+		boolean safe = false;
+		try {
+			ImageReader reader = (ImageReader) iter.next();
+			reader.setInput(imageInputStream, true, true);
+
+			long width = reader.getWidth(0);
+			long height = reader.getHeight(0);
+
+			safe = (height * width) <= maxSize;
+		} finally {
+			imageInputStream.close();
+		}
+
+		return safe;
 	}
 }

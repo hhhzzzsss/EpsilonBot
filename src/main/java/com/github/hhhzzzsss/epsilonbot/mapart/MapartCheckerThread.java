@@ -8,6 +8,7 @@ import org.imgscalr.Scalr;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 
@@ -36,6 +37,10 @@ public class MapartCheckerThread extends Thread {
     public void run() {
         BufferedImage img;
         try {
+            byte[] imageBin = DownloadUtils.DownloadToByteArray(url, 50*1024*1024);
+            if (!DownloadUtils.imageIsSafe(new ByteArrayInputStream(imageBin))) {
+                throw new IOException("Image is too large");
+            }
             img = ImageIO.read(DownloadUtils.DownloadToOutputStream(url, 50*1024*1024));
         } catch (Exception e) {
             exception = e;
