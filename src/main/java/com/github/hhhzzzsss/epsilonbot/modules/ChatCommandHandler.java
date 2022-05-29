@@ -83,7 +83,7 @@ public class ChatCommandHandler implements PacketListener {
 	 */
 	public void setPrefix(String prefix) {
 		this.prefix = prefix;
-		chatCommandPattern = Pattern.compile(String.format(".* » %s(\\S+)(.*)?", prefix));
+		chatCommandPattern = Pattern.compile(String.format(".* » +%s(\\S+)(.*)?", prefix));
 		discordCommandPattern = Pattern.compile(String.format("\\[Discord\\] .*: %s(\\S+)(.*)?", prefix));
 	}
 }
