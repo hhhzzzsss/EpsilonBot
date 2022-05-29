@@ -9,6 +9,7 @@ import com.github.hhhzzzsss.epsilonbot.command.ChatCommand;
 import com.github.hhhzzzsss.epsilonbot.command.ChatSender;
 import com.github.hhhzzzsss.epsilonbot.command.CommandException;
 import com.github.hhhzzzsss.epsilonbot.mapart.MapartBuilderSession;
+import com.github.hhhzzzsss.epsilonbot.mapart.MapartCheckerThread;
 import com.github.hhhzzzsss.epsilonbot.mapart.MapartManager;
 import com.github.hhhzzzsss.epsilonbot.modules.BuildHandler;
 import lombok.RequiredArgsConstructor;
@@ -65,15 +66,24 @@ public class MapartCommand implements ChatCommand {
         }
 
         BuildHandler buildHandler = bot.getBuildHandler();
-        if (buildHandler.getBuilderSession() != null) {
-            throw new CommandException("I'm currently working on another build so I can't start something else");
+        if (buildHandler.getBuilderSession() == null) {
+            int mapIdx = MapartManager.getMapartIndex().size();
+            MapartBuilderSession mbs;
+            try {
+                mbs = new MapartBuilderSession(bot, mapIdx, url, width, height);
+            } catch (IOException e) {
+                throw new CommandException(e.getMessage());
+            }
+            buildHandler.setBuilderSession(mbs);
+            bot.sendChat("Loading mapart...");
+        } else {
+            MapartCheckerThread mct;
+            try {
+                mct = new MapartCheckerThread(bot, url, width, height);
+            } catch (IOException e) {
+                throw new CommandException(e.getMessage());
+            }
+            buildHandler.queueMapart(mct);
         }
-        int mapIdx = MapartManager.getMapartIndex().size();
-        try {
-            buildHandler.setBuilderSession(new MapartBuilderSession(bot, mapIdx, url, width, height));
-        } catch (IOException e) {
-            throw new CommandException(e.getMessage());
-        }
-        bot.sendChat("Loading mapart...");
     }
 }

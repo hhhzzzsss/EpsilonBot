@@ -6,11 +6,13 @@ import com.github.hhhzzzsss.epsilonbot.build.BuilderSession;
 import com.github.hhhzzzsss.epsilonbot.buildsync.Plot;
 import com.github.hhhzzzsss.epsilonbot.buildsync.PlotBuilderSession;
 import com.github.hhhzzzsss.epsilonbot.buildsync.PlotManager;
+import com.github.hhhzzzsss.epsilonbot.command.CommandException;
 import com.github.hhhzzzsss.epsilonbot.listeners.DisconnectListener;
 import com.github.hhhzzzsss.epsilonbot.listeners.PacketListener;
 import com.github.hhhzzzsss.epsilonbot.listeners.TickListener;
 import com.github.hhhzzzsss.epsilonbot.mapart.MapartBuildState;
 import com.github.hhhzzzsss.epsilonbot.mapart.MapartBuilderSession;
+import com.github.hhhzzzsss.epsilonbot.mapart.MapartCheckerThread;
 import com.github.hhhzzzsss.epsilonbot.util.ChatUtils;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSetTimePacket;
@@ -23,6 +25,8 @@ import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -34,8 +38,12 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
 
     private int actionQuota = 0;
 
-    public static final long BUILD_CHECK_DELAY = 5000;
+    public static final long BUILD_CHECK_DELAY = 2000;
     private long nextBuildCheckTime = System.currentTimeMillis();
+
+    public static final int MAX_MAPART_QUEUE = 5;
+    private Queue<MapartCheckerThread> unloadedMapartQueue = new LinkedBlockingQueue<>();
+    private Queue<MapartCheckerThread> mapartQueue = new LinkedBlockingQueue<>();
 
     @Override
     public void onTick() {
@@ -72,6 +80,8 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
                 }
             }
         }
+
+        checkUnloadedMapartQueue();
     }
 
     @Override
@@ -151,6 +161,33 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        } else if (!mapartQueue.isEmpty()) {
+            try {
+                setBuilderSession(mapartQueue.poll().getBuilderSession());
+                bot.sendChat("Loading queued mapart for " + mapartQueue.peek().getUrl());
+            } catch (IOException e) {
+                bot.sendChat("Exception occured while loading queued mapart: " + e.getMessage());
+            }
         }
+    }
+
+    private void checkUnloadedMapartQueue() {
+        while (!unloadedMapartQueue.isEmpty() && !unloadedMapartQueue.peek().isAlive()) {
+            MapartCheckerThread mct = unloadedMapartQueue.poll();
+            if (mct.getException() != null) {
+                bot.sendChat("Error while loading mapart: " + mct.getException().getMessage());
+            } else {
+                mapartQueue.add(mct);
+                bot.sendChat("Queued mapart for " + mct.getStrUrl());
+            }
+        }
+    }
+
+    public void queueMapart(MapartCheckerThread mct) throws CommandException {
+        if (mapartQueue.size() + unloadedMapartQueue.size() > MAX_MAPART_QUEUE) {
+            throw new CommandException("The mapart queue is full");
+        }
+        mct.start();
+        unloadedMapartQueue.add(mct);
     }
 }

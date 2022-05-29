@@ -6,6 +6,7 @@ import com.github.hhhzzzsss.epsilonbot.build.BuilderSession;
 import com.github.hhhzzzsss.epsilonbot.build.action.*;
 import com.github.hhhzzzsss.epsilonbot.util.BlockUtils;
 import com.github.hhhzzzsss.epsilonbot.util.ItemUtils;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
@@ -16,12 +17,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class MapartBuilderSession extends BuilderSession {
-    String url;
-    int mapIdx;
+    @Getter String url;
+    @Getter int mapIdx;
     int originX;
     int originZ;
     int numTiles;
-    MapartLoaderThread loaderThread;
+    @Getter MapartLoaderThread loaderThread;
     boolean mapartLoaded = false;
     BlockElevation[][] blocks;
     int maxElevation;
