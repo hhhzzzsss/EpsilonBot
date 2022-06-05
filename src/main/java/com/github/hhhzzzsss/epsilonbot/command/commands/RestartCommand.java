@@ -8,7 +8,7 @@ import com.github.hhhzzzsss.epsilonbot.command.CommandException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class RestartCommand implements ChatCommand {
+public class RestartCommand extends ChatCommand {
 
     private final EpsilonBot bot;
 
@@ -25,7 +25,7 @@ public class RestartCommand implements ChatCommand {
         return "Restarts the bot";
     }
     @Override
-    public int getPermission() {
+    public int getDefaultPermission() {
         return 1;
     }
 

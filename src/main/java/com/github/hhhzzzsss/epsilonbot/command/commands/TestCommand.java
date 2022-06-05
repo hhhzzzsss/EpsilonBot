@@ -7,7 +7,7 @@ import com.github.hhhzzzsss.epsilonbot.command.CommandException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class TestCommand implements ChatCommand {
+public class TestCommand extends ChatCommand {
 
     private final EpsilonBot bot;
 
@@ -24,7 +24,7 @@ public class TestCommand implements ChatCommand {
         return "A test command";
     }
     @Override
-    public int getPermission() {
+    public int getDefaultPermission() {
         return 0;
     }
 

@@ -8,7 +8,7 @@ import com.github.hhhzzzsss.epsilonbot.command.CommandException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class StopCommand implements ChatCommand {
+public class StopCommand extends ChatCommand {
 
     private final EpsilonBot bot;
 
@@ -25,7 +25,7 @@ public class StopCommand implements ChatCommand {
         return "Stops the bot";
     }
     @Override
-    public int getPermission() {
+    public int getDefaultPermission() {
         return 1;
     }
 

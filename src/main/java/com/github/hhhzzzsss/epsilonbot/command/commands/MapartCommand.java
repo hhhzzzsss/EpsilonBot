@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @RequiredArgsConstructor
-public class MapartCommand implements ChatCommand {
+public class MapartCommand extends ChatCommand {
 
     private final EpsilonBot bot;
 
@@ -37,7 +37,7 @@ public class MapartCommand implements ChatCommand {
         return "Builds mapart for a given image";
     }
     @Override
-    public int getPermission() {
+    public int getDefaultPermission() {
         return 0;
     }
 

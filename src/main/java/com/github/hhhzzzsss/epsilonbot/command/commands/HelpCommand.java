@@ -1,7 +1,7 @@
 package com.github.hhhzzzsss.epsilonbot.command.commands;
 
+import com.github.hhhzzzsss.epsilonbot.Config;
 import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
-import com.github.hhhzzzsss.epsilonbot.Main;
 import com.github.hhhzzzsss.epsilonbot.command.ChatCommand;
 import com.github.hhhzzzsss.epsilonbot.command.ChatSender;
 import com.github.hhhzzzsss.epsilonbot.command.Command;
@@ -9,7 +9,7 @@ import com.github.hhhzzzsss.epsilonbot.command.CommandException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class HelpCommand implements ChatCommand {
+public class HelpCommand extends ChatCommand {
 
     private final EpsilonBot bot;
 
@@ -26,7 +26,7 @@ public class HelpCommand implements ChatCommand {
         return "Lists or explains commands";
     }
     @Override
-    public int getPermission() {
+    public int getDefaultPermission() {
         return 0;
     }
 
@@ -38,7 +38,7 @@ public class HelpCommand implements ChatCommand {
             sb.append("Commands -");
             for (Command command : bot.getCommandList().getCommands()) {
                 if (command instanceof ChatCommand && command.getPermission() <= sender.getPermission()) {
-                    sb.append(" `" + command.getName());
+                    sb.append(" " + Config.getConfig().getCommandPrefix() + command.getName());
                 }
             }
             bot.sendChat(sb.toString());

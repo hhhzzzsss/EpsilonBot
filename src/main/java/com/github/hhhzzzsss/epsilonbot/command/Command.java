@@ -1,8 +1,13 @@
 package com.github.hhhzzzsss.epsilonbot.command;
 
-public interface Command {
-	public String getName();
-	public String[] getSyntax();
-	public String getDescription();
-	public int getPermission();
+import lombok.Getter;
+import lombok.Setter;
+
+public abstract class Command {
+	public abstract String getName();
+	public abstract String[] getSyntax();
+	public abstract String getDescription();
+	public abstract int getDefaultPermission();
+
+	@Getter @Setter private int permission = getDefaultPermission();
 }

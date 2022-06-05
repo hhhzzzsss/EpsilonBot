@@ -26,6 +26,7 @@ public class Config {
     int buildSyncZ;
     int mapartX;
     int mapartZ;
+    String commandPrefix = "`";
     ArrayList<String> trusted;
 
     static {

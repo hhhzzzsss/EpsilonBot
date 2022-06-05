@@ -7,7 +7,7 @@ import com.github.hhhzzzsss.epsilonbot.command.CommandException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class BuildStatusCommand implements ChatCommand {
+public class BuildStatusCommand extends ChatCommand {
 
     private final EpsilonBot bot;
 
@@ -24,7 +24,7 @@ public class BuildStatusCommand implements ChatCommand {
         return "Gets current build status";
     }
     @Override
-    public int getPermission() {
+    public int getDefaultPermission() {
         return 0;
     }
 

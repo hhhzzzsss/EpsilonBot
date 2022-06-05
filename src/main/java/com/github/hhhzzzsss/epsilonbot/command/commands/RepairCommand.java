@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class RepairCommand implements ChatCommand {
+public class RepairCommand extends ChatCommand {
 
     private final EpsilonBot bot;
 
@@ -33,7 +33,7 @@ public class RepairCommand implements ChatCommand {
         return "Attempts to repair a specified plot";
     }
     @Override
-    public int getPermission() {
+    public int getDefaultPermission() {
         return 0;
     }
 

@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class ReloadIndexCommand implements ChatCommand {
+public class ReloadIndexCommand extends ChatCommand {
 
     private final EpsilonBot bot;
 
@@ -27,7 +27,7 @@ public class ReloadIndexCommand implements ChatCommand {
         return "Reloads the plot index";
     }
     @Override
-    public int getPermission() {
+    public int getDefaultPermission() {
         return 0;
     }
 

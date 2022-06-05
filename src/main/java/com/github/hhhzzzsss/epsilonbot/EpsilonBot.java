@@ -55,7 +55,7 @@ public class EpsilonBot {
 	@Getter protected PositionManager posManager = new PositionManager(this);
 	@Getter protected World world = new World(this);
 	@Getter protected CommandList commandList = new CommandList();
-	@Getter protected ChatCommandHandler chatCommandHandler = new ChatCommandHandler(this, commandList, "`");
+	@Getter protected ChatCommandHandler chatCommandHandler = new ChatCommandHandler(this, commandList, Config.getConfig().commandPrefix);
 	@Getter protected BuildHandler buildHandler = new BuildHandler(this);
 	
 	public EpsilonBot() {
@@ -325,5 +325,8 @@ public class EpsilonBot {
 
 		commandList.add(new RestartCommand(this));
 		commandList.add(new StopCommand(this));
+
+		commandList.loadPermissionsFromFile();
+		commandList.savePermissionsToFile();
 	}
 }

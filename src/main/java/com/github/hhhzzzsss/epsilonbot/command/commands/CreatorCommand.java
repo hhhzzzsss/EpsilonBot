@@ -8,7 +8,7 @@ import com.github.hhhzzzsss.epsilonbot.command.CommandException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class CreatorCommand implements ChatCommand {
+public class CreatorCommand extends ChatCommand {
 
     private final EpsilonBot bot;
 
@@ -25,7 +25,7 @@ public class CreatorCommand implements ChatCommand {
         return "Says who the bot's creator is";
     }
     @Override
-    public int getPermission() {
+    public int getDefaultPermission() {
         return 0;
     }
 
