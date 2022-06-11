@@ -43,7 +43,7 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
 
     public static final int MAX_MAPART_QUEUE = 5;
     private Queue<MapartCheckerThread> unloadedMapartQueue = new LinkedBlockingQueue<>();
-    private Queue<MapartCheckerThread> mapartQueue = new LinkedBlockingQueue<>();
+    @Getter private Queue<MapartCheckerThread> mapartQueue = new LinkedBlockingQueue<>();
 
     @Override
     public void onTick() {
