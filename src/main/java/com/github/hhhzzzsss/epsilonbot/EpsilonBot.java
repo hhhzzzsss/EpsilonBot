@@ -324,6 +324,7 @@ public class EpsilonBot {
 		commandList.add(new RepairCommand(this));
 		commandList.add(new MapartCommand(this));
 		commandList.add(new ShowQueueCommand(this));
+		commandList.add(new CancelMapartCommand(this));
 		commandList.add(new ListCommand(this));
 
 		commandList.add(new RestartCommand(this));
