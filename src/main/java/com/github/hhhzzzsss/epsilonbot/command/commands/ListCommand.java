@@ -36,7 +36,7 @@ public class ListCommand extends ChatCommand {
         int numPlayers = bot.getPlayerListTracker().getPlayerList().size();
         String playersString = String.join(
                 ", ",
-                bot.getPlayerListTracker().getPlayerList().values().stream().sorted().map(playerData -> playerData.getName()).collect(Collectors.toList())
+                bot.getPlayerListTracker().getPlayerList().values().stream().map(playerData -> playerData.getName()).sorted().collect(Collectors.toList())
         );
         bot.sendChat(String.format("There are %d/60 online players", numPlayers));
         bot.sendChat(playersString);

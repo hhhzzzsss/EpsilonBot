@@ -49,6 +49,7 @@ public class CancelMapartCommand extends ChatCommand {
                 }
             }
             bot.getBuildHandler().setBuilderSession(null);
+            bot.sendChat("Cancelled current mapart");
         } else {
             ArgsParser parser = new ArgsParser(this, args);
             int idx = parser.readInt(true);
@@ -63,31 +64,7 @@ public class CancelMapartCommand extends ChatCommand {
                     break;
                 }
             }
+            bot.sendChat("Removed from queue");
         }
-        ArrayList<String> queuedItems = new ArrayList<>();
-        if (bot.getBuildHandler().getBuilderSession() != null && bot.getBuildHandler().getBuilderSession() instanceof MapartBuilderSession) {
-            MapartBuilderSession mbs = (MapartBuilderSession) bot.getBuildHandler().getBuilderSession();
-            queuedItems.add("Current:" + truncateUrl(mbs.getUrl()));
-        }
-        int index = 1;
-        for (MapartCheckerThread mct : bot.getBuildHandler().getMapartQueue()) {
-            queuedItems.add(index + ":" + truncateUrl(mct.getStrUrl()));
-            index++;
-        }
-        if (queuedItems.isEmpty()) {
-            bot.sendChat("Queue is empty");
-        } else {
-            bot.sendChat(String.join(" | ", queuedItems));
-        }
-    }
-
-    public String truncateUrl(String strUrl) {
-        if (strUrl.startsWith("https://")) {
-            strUrl = strUrl.substring(8);
-        }
-        if (strUrl.length() > 25) {
-            strUrl = strUrl.substring(0, 22) + "...";
-        }
-        return strUrl;
     }
 }
