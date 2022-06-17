@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 import java.util.Map;
+import java.net.URL;
 
 @RequiredArgsConstructor
 public class MapartCommand extends ChatCommand {
@@ -45,9 +46,13 @@ public class MapartCommand extends ChatCommand {
     public void executeChat(ChatSender sender, String args) throws CommandException {
         ArgsParser parser = new ArgsParser(this, args);
 
-        String url = parser.readWord(true);
+        String strUrl = parser.readWord(true);
         Integer width = parser.readInt(false);
         Integer height = parser.readInt(false);
+        if (strUrl.startsWith("data:")) {
+            throw new CommandException("Cannot build mapart from data: URLs. Please upload the image to a image sharing site like https://imgur.com/ and use the URL from there.");
+        }
+
         if (width == null) {
             width = 1;
             height = 1;
@@ -66,6 +71,14 @@ public class MapartCommand extends ChatCommand {
         }
 
         BuildHandler buildHandler = bot.getBuildHandler();
+        URL url;
+        try {
+            url = new URL(strUrl);
+        } catch (IOException e) {
+            throw new CommandException(e.getMessage());
+        }
+
+
         if (buildHandler.getBuilderSession() == null) {
             int mapIdx = MapartManager.getMapartIndex().size();
             MapartBuilderSession mbs;

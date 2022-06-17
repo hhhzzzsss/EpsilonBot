@@ -37,11 +37,11 @@ public class ShowQueueCommand extends ChatCommand {
         ArrayList<String> queuedItems = new ArrayList<>();
         if (bot.getBuildHandler().getBuilderSession() != null && bot.getBuildHandler().getBuilderSession() instanceof MapartBuilderSession) {
             MapartBuilderSession mbs = (MapartBuilderSession) bot.getBuildHandler().getBuilderSession();
-            queuedItems.add("Current:" + truncateUrl(mbs.getUrl()));
+            queuedItems.add("Current: " + truncateUrl(mbs.getUrl().toString()));
         }
         int index = 1;
         for (MapartCheckerThread mct : bot.getBuildHandler().getMapartQueue()) {
-            queuedItems.add(index + ":" + truncateUrl(mct.getStrUrl()));
+            queuedItems.add(truncateUrl(mct.getUrl().toString()));
             index++;
         }
         if (queuedItems.isEmpty()) {

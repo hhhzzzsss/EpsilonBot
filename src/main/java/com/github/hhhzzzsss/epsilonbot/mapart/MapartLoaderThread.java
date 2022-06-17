@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.net.URL;
 
 public class MapartLoaderThread extends Thread {
-	private String strUrl;
 	private URL url;
 	@Getter private int horizDim;
 	@Getter private int vertDim;
@@ -21,9 +20,8 @@ public class MapartLoaderThread extends Thread {
 	@Getter private BlockElevation[][] blocks;
 	@Getter private int maxElevation = 0;
 	
-	public MapartLoaderThread(String strUrl, int horizDim, int vertDim) throws IOException {
-		this.strUrl = strUrl;
-		this.url = new URL(strUrl);
+	public MapartLoaderThread(URL url, int horizDim, int vertDim) throws IOException {
+		this.url = url;
 		if (!this.url.getProtocol().startsWith("http")) {
 			throw new IOException("Illegal protocol: must use http or https");
 		}
@@ -197,7 +195,7 @@ public class MapartLoaderThread extends Thread {
 			}
 			direction = -direction;
 		}
-		MapartManager.getMapartIndex().add(new MapartManager.MapartInfo(strUrl, horizDim, vertDim));
+		MapartManager.getMapartIndex().add(new MapartManager.MapartInfo(url, horizDim, vertDim));
 		try {
 			MapartManager.saveMapartIndex();
 		} catch (IOException e) {
