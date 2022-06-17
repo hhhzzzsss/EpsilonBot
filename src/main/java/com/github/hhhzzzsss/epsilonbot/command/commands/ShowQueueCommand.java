@@ -55,8 +55,11 @@ public class ShowQueueCommand extends ChatCommand {
         if (strUrl.startsWith("https://")) {
             strUrl = strUrl.substring(8);
         }
-        if (strUrl.length() > 25) {
-            strUrl = strUrl.substring(0, 22) + "...";
+        if (strUrl.length() > 22) {
+            String newUrl = strUrl.substring(0, 19) + "...";
+            newUrl += strUrl.substring(strUrl.length() - 8);
+
+            return newUrl;
         }
         return strUrl;
     }
