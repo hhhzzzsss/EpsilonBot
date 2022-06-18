@@ -41,7 +41,7 @@ public class ShowQueueCommand extends ChatCommand {
         }
         int index = 1;
         for (MapartCheckerThread mct : bot.getBuildHandler().getMapartQueue()) {
-            queuedItems.add(truncateUrl(mct.getUrl().toString()));
+            queuedItems.add(index + ": " + truncateUrl(mct.getUrl().toString()));
             index++;
         }
         if (queuedItems.isEmpty()) {
@@ -55,7 +55,7 @@ public class ShowQueueCommand extends ChatCommand {
         if (strUrl.startsWith("https://")) {
             strUrl = strUrl.substring(8);
         }
-        if (strUrl.length() > 22) {
+        if (strUrl.length() > 30) {
             String newUrl = strUrl.substring(0, 19) + "...";
             newUrl += strUrl.substring(strUrl.length() - 8);
 
