@@ -23,7 +23,7 @@ public class MapartBuildState {
             .registerTypeAdapter(Color.class, new ColorDeserializer())
             .create();
 
-    public String url;
+    public URL url;
     public int mapIdx;
     public int originX;
     public int originZ;

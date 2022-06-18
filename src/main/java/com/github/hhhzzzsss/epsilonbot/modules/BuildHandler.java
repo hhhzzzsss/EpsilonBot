@@ -164,7 +164,7 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
         } else if (!mapartQueue.isEmpty()) {
             try {
                 setBuilderSession(mapartQueue.poll().getBuilderSession());
-                bot.sendChat("Loading queued mapart for " + mapartQueue.peek().getStrUrl());
+                bot.sendChat("Loading queued mapart for " + mapartQueue.peek().getUrl().toString());
             } catch (IOException e) {
                 bot.sendChat("Exception occured while loading queued mapart: " + e.getMessage());
             }

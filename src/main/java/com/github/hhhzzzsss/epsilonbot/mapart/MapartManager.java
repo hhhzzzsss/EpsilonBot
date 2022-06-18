@@ -14,6 +14,7 @@ import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.net.URL;
 
 public class MapartManager {
     public static final Path INDEX_PATH = Path.of("mapartIndex.json");
@@ -22,7 +23,7 @@ public class MapartManager {
 
     @AllArgsConstructor
     public static class MapartInfo {
-        String url;
+        URL url;
         int horizDim;
         int vertDim;
     }

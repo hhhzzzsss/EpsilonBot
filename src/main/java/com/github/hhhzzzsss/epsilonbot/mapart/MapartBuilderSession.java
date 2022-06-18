@@ -15,9 +15,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.net.URL;
 
 public class MapartBuilderSession extends BuilderSession {
-    @Getter String url;
+    @Getter URL url;
     @Getter int mapIdx;
     int originX;
     int originZ;
@@ -60,14 +61,14 @@ public class MapartBuilderSession extends BuilderSession {
                 false));
     }
 
-    public MapartBuilderSession(EpsilonBot bot, int mapIdx, String strUrl, int horizDim, int vertDim) throws IOException {
+    public MapartBuilderSession(EpsilonBot bot, int mapIdx, URL url, int horizDim, int vertDim) throws IOException {
         super(bot);
-        this.url = strUrl;
+        this.url = url;
         this.mapIdx = mapIdx;
         this.originX = Math.floorDiv(Config.getConfig().getMapartX()+64, 128)*128-64;
         this.originZ = Math.floorDiv(Config.getConfig().getMapartZ()+64, 128)*128-64 + 256*mapIdx - 1;
         this.numTiles = horizDim*vertDim;
-        this.loaderThread = new MapartLoaderThread(strUrl, horizDim, vertDim);
+        this.loaderThread = new MapartLoaderThread(url, horizDim, vertDim);
         this.loaderThread.start();
         actionQueue.add(new CommandAction(
                 "//limit -1",
@@ -311,7 +312,7 @@ public class MapartBuilderSession extends BuilderSession {
     // todo
     @Override
     public void sendStatusMessage() {
-        bot.sendChat("Currently building mapart for: " + url);
+        bot.sendChat("Currently building mapart for: " + url.toString());
         if (tileIndex < numTiles) {
             int totalBlocks = 128*129*numTiles;
             int totalProgress = 128*129*tileIndex + tileProgress;
