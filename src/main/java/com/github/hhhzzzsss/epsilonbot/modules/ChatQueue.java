@@ -20,11 +20,11 @@ public class ChatQueue implements TickListener, PacketListener {
 
 	public final EpsilonBot bot;
 	
-	@Getter @Setter public long chatDelay = 1000;
+	@Getter @Setter public long chatDelay = 1200;
 
 	@Getter public long nextChatTime = System.currentTimeMillis();
 	
-	@Getter @Setter public int maxChatQueue = 50;
+	@Getter @Setter public int maxChatQueue = 12;
 	
 	public Queue<String> chatQueue = new LinkedBlockingQueue<>();
 	boolean timeFlag = true;
