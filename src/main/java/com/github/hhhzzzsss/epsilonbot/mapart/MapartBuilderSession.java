@@ -61,14 +61,14 @@ public class MapartBuilderSession extends BuilderSession {
                 false));
     }
 
-    public MapartBuilderSession(EpsilonBot bot, int mapIdx, URL url, int horizDim, int vertDim) throws IOException {
+    public MapartBuilderSession(EpsilonBot bot, int mapIdx, URL url, int horizDim, int vertDim, boolean dither) throws IOException {
         super(bot);
         this.url = url;
         this.mapIdx = mapIdx;
         this.originX = Math.floorDiv(Config.getConfig().getMapartX()+64, 128)*128-64;
         this.originZ = Math.floorDiv(Config.getConfig().getMapartZ()+64, 128)*128-64 + 256*mapIdx - 1;
         this.numTiles = horizDim*vertDim;
-        this.loaderThread = new MapartLoaderThread(url, horizDim, vertDim);
+        this.loaderThread = new MapartLoaderThread(url, horizDim, vertDim, dither);
         this.loaderThread.start();
         actionQueue.add(new CommandAction(
                 "//limit -1",

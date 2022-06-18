@@ -17,8 +17,9 @@ public class MapartCheckerThread extends Thread {
     @Getter URL url;
     @Getter int horizDim;
     @Getter int vertDim;
+    @Getter boolean dither;
     @Getter Throwable exception;
-    public MapartCheckerThread(EpsilonBot bot, URL url, int horizDim, int vertDim) throws IOException {
+    public MapartCheckerThread(EpsilonBot bot, URL url, int horizDim, int vertDim, boolean dither) throws IOException {
         this.bot = bot;
         this.url = url;
         if (!this.url.getProtocol().startsWith("http")) {
@@ -26,6 +27,7 @@ public class MapartCheckerThread extends Thread {
         }
         this.horizDim = horizDim;
         this.vertDim = vertDim;
+        this.dither = dither;
 
         setDefaultUncaughtExceptionHandler((t, e) -> {
             exception = e;
@@ -53,6 +55,6 @@ public class MapartCheckerThread extends Thread {
 
     public MapartBuilderSession getBuilderSession() throws IOException {
         int mapIdx = MapartManager.getMapartIndex().size();
-        return new MapartBuilderSession(bot, mapIdx, url, horizDim, vertDim);
+        return new MapartBuilderSession(bot, mapIdx, url, horizDim, vertDim, dither);
     }
 }

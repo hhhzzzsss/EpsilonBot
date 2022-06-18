@@ -16,17 +16,19 @@ public class MapartLoaderThread extends Thread {
 	private URL url;
 	@Getter private int horizDim;
 	@Getter private int vertDim;
+	@Getter private boolean dither;
 	@Getter private Throwable exception;
 	@Getter private BlockElevation[][] blocks;
 	@Getter private int maxElevation = 0;
 	
-	public MapartLoaderThread(URL url, int horizDim, int vertDim) throws IOException {
+	public MapartLoaderThread(URL url, int horizDim, int vertDim, boolean dither) throws IOException {
 		this.url = url;
 		if (!this.url.getProtocol().startsWith("http")) {
 			throw new IOException("Illegal protocol: must use http or https");
 		}
 		this.horizDim = horizDim;
 		this.vertDim = vertDim;
+		this.dither = dither;
 		this.blocks = new BlockElevation[128*horizDim*vertDim][129];
 
 		setDefaultUncaughtExceptionHandler((t, e) -> {
@@ -87,7 +89,11 @@ public class MapartLoaderThread extends Thread {
 			blocks[x][0] = new BlockElevation("stone", 1, Color.BLACK); // The tone and color of the noobline doesn't matter
 		}
 
-		loadBlocksWithDithering(img);
+		if (dither) {
+			loadBlocksWithDithering(img);
+		} else {
+			loadBlocksWithoutDithering(img);
+		}
 		
 		// Calcualate elevations
 		/*
@@ -194,6 +200,27 @@ public class MapartLoaderThread extends Thread {
 				}
 			}
 			direction = -direction;
+		}
+		MapartManager.getMapartIndex().add(new MapartManager.MapartInfo(url, horizDim, vertDim));
+		try {
+			MapartManager.saveMapartIndex();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void loadBlocksWithoutDithering(BufferedImage img) {
+		for (int y=0; y<128*vertDim; y++) {
+			for (int x = 0;  x < 128*horizDim; x++) {
+				int rgb = img.getRGB(x, y);
+				int r = (rgb & 0x00ff0000) >> 16;
+				int g = (rgb & 0x0000ff00) >> 8;
+				int b = (rgb & 0x000000ff);
+				int bx = x + (y/128)*(128*horizDim);
+				int bz = y%128+1;
+				BlockElevation be = getNearestMapColor(r, g, b);
+				blocks[bx][bz] = be;
+			}
 		}
 		MapartManager.getMapartIndex().add(new MapartManager.MapartInfo(url, horizDim, vertDim));
 		try {

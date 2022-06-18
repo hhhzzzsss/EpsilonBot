@@ -30,7 +30,7 @@ public class MapartCommand extends ChatCommand {
     @Override
     public String[] getSyntax() {
         return new String[] {
-                "<url> [<width>] [<height>]",
+                "<url> [<width>] [<height>] [<dithering>]",
         };
     }
     @Override
@@ -49,6 +49,17 @@ public class MapartCommand extends ChatCommand {
         String strUrl = parser.readWord(true);
         Integer width = parser.readInt(false);
         Integer height = parser.readInt(false);
+        String ditheringArg = parser.readWord(false);
+        boolean dithering;
+        if (ditheringArg == null) {
+            dithering = true;
+        } else if (ditheringArg.equalsIgnoreCase("true")) {
+            dithering = true;
+        } else if (ditheringArg.equalsIgnoreCase("false")) {
+            dithering = false;
+        } else {
+            throw parser.getError("true or false");
+        }
         if (strUrl.startsWith("data:")) {
             throw new CommandException("Cannot build mapart from data: URLs. Please upload the image to a image sharing site like https://imgur.com/ and use the URL from there.");
         }
@@ -79,11 +90,12 @@ public class MapartCommand extends ChatCommand {
         }
 
 
+
         if (buildHandler.getBuilderSession() == null) {
             int mapIdx = MapartManager.getMapartIndex().size();
             MapartBuilderSession mbs;
             try {
-                mbs = new MapartBuilderSession(bot, mapIdx, url, width, height);
+                mbs = new MapartBuilderSession(bot, mapIdx, url, width, height, dithering);
             } catch (IOException e) {
                 throw new CommandException(e.getMessage());
             }
@@ -92,7 +104,7 @@ public class MapartCommand extends ChatCommand {
         } else {
             MapartCheckerThread mct;
             try {
-                mct = new MapartCheckerThread(bot, url, width, height);
+                mct = new MapartCheckerThread(bot, url, width, height, dithering);
             } catch (IOException e) {
                 throw new CommandException(e.getMessage());
             }
