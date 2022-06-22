@@ -74,7 +74,7 @@ public class MapartBuilderSession extends BuilderSession {
                 "//limit -1",
                 false));
         actionQueue.add(new CommandAction(
-                String.format("/setwarp epsilon_mapart_%d", mapIdx),
+                String.format("/setwarp %s_%d", Config.getConfig().getWarpName(), mapIdx),
                 false));
         actionQueue.add(new WaitAction(3));
     }
@@ -143,7 +143,7 @@ public class MapartBuilderSession extends BuilderSession {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                bot.sendChat(String.format("Finished building mapart. Go to /warp epsilon_mapart_%d to collect", mapIdx));
+                bot.sendChat(String.format("Finished building mapart. Go to /warp %s_%d to collect", Config.getConfig().getWarpName(), mapIdx));
                 stop();
                 return;
             }

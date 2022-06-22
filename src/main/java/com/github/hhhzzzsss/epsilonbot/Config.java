@@ -27,6 +27,7 @@ public class Config {
     int mapartX;
     int mapartZ;
     String commandPrefix = "`";
+    String warpName = "epsilon_mapart";
     ArrayList<String> trusted;
 
     static {
