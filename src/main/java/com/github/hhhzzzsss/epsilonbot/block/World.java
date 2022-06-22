@@ -126,7 +126,7 @@ public class World implements PacketListener, DisconnectListener {
 
 	public void placeBlock(int x, int y, int z, int expectedBlockState) {
 		bot.sendPacket(new ServerboundUseItemOnPacket(new Position(x, y, z), Direction.UP, Hand.MAIN_HAND, 0.5f, 0.5f, 0.5f, false));
-		setBlock(x, y, z, expectedBlockState);
+//		setBlock(x, y, z, expectedBlockState);
 	}
 
 	public void breakBlock(int x, int y, int z) {
