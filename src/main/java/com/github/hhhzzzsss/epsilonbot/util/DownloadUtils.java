@@ -76,7 +76,7 @@ public class DownloadUtils {
 
 		if (!iter.hasNext()) {
 			imageInputStream.close();
-			return false;
+			throw new IOException("Failed to load as image");
 		}
 
 		boolean safe = false;
@@ -86,6 +86,8 @@ public class DownloadUtils {
 
 			long width = reader.getWidth(0);
 			long height = reader.getHeight(0);
+			System.out.println(width);
+			System.out.println(height);
 
 			safe = (height * width) <= maxSize;
 		} finally {
