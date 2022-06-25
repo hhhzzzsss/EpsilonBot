@@ -73,9 +73,14 @@ public class MapartBuilderSession extends BuilderSession {
         actionQueue.add(new CommandAction(
                 "//limit -1",
                 false));
-        actionQueue.add(new CommandAction(
-                String.format("/setwarp %s_%d", Config.getConfig().getWarpName(), mapIdx),
-                false));
+
+        String warpName = Config.getConfig().getWarpName();
+        if (!warpName.equals("")) {
+            actionQueue.add(new CommandAction(
+                    String.format("/setwarp %s_%d", warpName, mapIdx),
+                    false));
+        }
+
         actionQueue.add(new WaitAction(3));
     }
 
@@ -143,7 +148,12 @@ public class MapartBuilderSession extends BuilderSession {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                bot.sendChat(String.format("Finished building mapart. Go to /warp %s_%d to collect", Config.getConfig().getWarpName(), mapIdx));
+
+                String warpName = Config.getConfig().getWarpName();
+                if (!warpName.equals("")) {
+                    bot.sendChat(String.format("Finished building mapart. Go to /warp %s_%d to collect", warpName, mapIdx));
+                }
+
                 stop();
                 return;
             }
