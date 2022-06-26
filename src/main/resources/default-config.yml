@@ -2,6 +2,7 @@ host: play.totalfreedom.me
 port: 25565
 username: username_goes_here
 password: password_goes_here
+authType: microsoft # microsoft, mojang or offline
 buildSyncX: 2021952
 buildSyncZ: 17080800
 mapartX: -10921088
