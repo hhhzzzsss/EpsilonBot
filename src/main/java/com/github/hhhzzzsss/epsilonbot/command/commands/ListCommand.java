@@ -30,6 +30,10 @@ public class ListCommand extends ChatCommand {
     public int getDefaultPermission() {
         return 0;
     }
+    @Override
+    public String[] getAliases() {
+        return new String[]{"l"};
+    }
 
     @Override
     public void executeChat(ChatSender sender, String args) throws CommandException {

@@ -9,5 +9,9 @@ public abstract class Command {
 	public abstract String getDescription();
 	public abstract int getDefaultPermission();
 
+	public String[] getAliases() {
+		return new String[0];
+	}
+
 	@Getter @Setter private int permission = getDefaultPermission();
 }

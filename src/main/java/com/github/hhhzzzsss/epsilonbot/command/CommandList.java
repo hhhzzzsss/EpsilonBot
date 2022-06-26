@@ -18,6 +18,11 @@ public class CommandList {
 	
 	public void add(Command command) {
 		commands.put(command.getName().toLowerCase(), command);
+		for (String alias : command.getAliases()) {
+			if (!commands.containsKey(alias)) {
+				commands.put(alias.toLowerCase(), command);
+			}
+		}
 	}
 	
 	public Command get(String name) {

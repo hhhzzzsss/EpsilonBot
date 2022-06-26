@@ -31,6 +31,10 @@ public class ShowQueueCommand extends ChatCommand {
     public int getDefaultPermission() {
         return 0;
     }
+    @Override
+    public String[] getAliases() {
+        return new String[]{"queue", "q"};
+    }
 
     @Override
     public void executeChat(ChatSender sender, String args) throws CommandException {
