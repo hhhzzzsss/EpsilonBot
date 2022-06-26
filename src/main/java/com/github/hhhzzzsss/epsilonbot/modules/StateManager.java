@@ -34,6 +34,7 @@ public class StateManager implements PacketListener, TickListener, DisconnectLis
 	@Getter @Setter public static long commandDelay = 2000;
 	private long nextRectifyTime = System.currentTimeMillis();
 
+	@Getter @Setter private boolean isTotalFreedom = false;
 	@Getter @Setter private boolean onFreedomServer = false;
 	
 	@Getter @Setter private boolean autoOp = true;
@@ -84,10 +85,18 @@ public class StateManager implements PacketListener, TickListener, DisconnectLis
 			ClientboundCommandsPacket t_packet = (ClientboundCommandsPacket) packet;
 			onFreedomServer = false;
 			for (CommandNode node : t_packet.getNodes()) {
-				if (node.getName() != null && node.getName().equals("opme")) {
+				if (node.getName() == null) {
+					continue;
+				}
+
+				if (node.getName().equals("freedom-01")) {
+					isTotalFreedom = true;
+				} else if (node.getName().equals("opme")) {
 					onFreedomServer = true;
 				}
 			}
+
+			if (!isTotalFreedom) onFreedomServer = true;
 		} else if (packet instanceof ClientboundOpenScreenPacket) {
 			ClientboundOpenScreenPacket t_packet = (ClientboundOpenScreenPacket) packet;
 			if (!onFreedomServer && t_packet.getName().contains("Server Selector")) {
@@ -127,7 +136,7 @@ public class StateManager implements PacketListener, TickListener, DisconnectLis
 			return;
 		}
 		if (autoOp && !opped) {
-			bot.sendCommand("/opme");
+			if (isTotalFreedom) bot.sendCommand("/opme");
 			nextRectifyTime += commandDelay;
 		}
 		if (autoGamemode && gamemode != targetGamemode) {
@@ -143,7 +152,7 @@ public class StateManager implements PacketListener, TickListener, DisconnectLis
 			// Spectator not supported
 			nextRectifyTime += commandDelay;
 		}
-		if (autoWorld && !worldName.equals(targetWorld)) {
+		if (isTotalFreedom && autoWorld && !worldName.equals(targetWorld)) {
 			bot.sendCommand("/world " + targetWorld.replace("minecraft:", ""));
 		}
 	}
