@@ -22,6 +22,7 @@ public class Config {
     int port = 25565;
     String username;
     String password;
+    String authType = "microsoft";
     int buildSyncX;
     int buildSyncZ;
     int mapartX;

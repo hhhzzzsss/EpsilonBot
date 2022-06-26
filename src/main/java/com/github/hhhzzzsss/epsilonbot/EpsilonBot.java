@@ -7,8 +7,7 @@ import com.github.hhhzzzsss.epsilonbot.listeners.DisconnectListener;
 import com.github.hhhzzzsss.epsilonbot.listeners.PacketListener;
 import com.github.hhhzzzsss.epsilonbot.listeners.TickListener;
 import com.github.hhhzzzsss.epsilonbot.modules.*;
-import com.github.steveice10.mc.auth.service.AuthenticationService;
-import com.github.steveice10.mc.auth.service.MsaAuthenticationService;
+import com.github.hhhzzzsss.epsilonbot.util.Auth;
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPacket;
@@ -37,7 +36,6 @@ public class EpsilonBot {
 	@Getter private final String host;
 	@Getter private final int port;
 	@Getter @Setter private ProxyInfo PROXY_INFO = null;
-	@Getter private final String OAUTH_CLIENT_ID = "389b1b32-b5d5-43b2-bddc-84ce938d6737"; // token from https://github.com/microsoft/Office365APIEditor
 	@Getter private Session session = null;
 	@Getter private boolean running = true;
 	@Getter private boolean loggedIn = false;
@@ -74,14 +72,10 @@ public class EpsilonBot {
 	private void connect() {
 		MinecraftProtocol protocol;
 		try {
-			AuthenticationService authService = new MsaAuthenticationService(OAUTH_CLIENT_ID);
-			authService.setUsername(Config.getConfig().getUsername());
-			authService.setPassword(Config.getConfig().getPassword());
-			authService.login();
-			protocol = new MinecraftProtocol(authService.getSelectedProfile(), authService.getAccessToken());
+			protocol = Auth.login(Config.getConfig().getUsername(), Config.getConfig().getPassword(), Config.getConfig().getAuthType());
 			System.out.println("Successfully authenticated user.");
 		} catch (Throwable e) {
-			chatLogger.log("Error: failed to authenticate user. Restarting...");
+			chatLogger.log("Error: failed to authenticate user: " + e.getMessage() + ". Restarting...");
 			Main.restartBot();
 			return;
 		}
