@@ -1,17 +1,19 @@
 package com.github.hhhzzzsss.epsilonbot;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import lombok.Data;
 import lombok.Getter;
 import org.apache.commons.io.IOUtils;
 import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
-
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.ArrayList;
-import java.util.UUID;
 
 @Data
 public class Config {
@@ -30,11 +32,11 @@ public class Config {
     String commandPrefix = "`";
     String warpName = "epsilon_mapart";
     ArrayList<String> trusted;
-
     static {
         if (!file.exists()) {
             // creates config file from default-config.yml
-            InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("default-config.yml");
+            InputStream is = ClassLoader.getSystemClassLoader()
+                .getResourceAsStream("default-config.yml");
             try {
                 Files.copy(is, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (IOException e) {
@@ -55,4 +57,7 @@ public class Config {
             e.printStackTrace();
         }
     }
+
+    boolean mapartRatelimitEnabled;
+    int mapartRatelimit;
 }

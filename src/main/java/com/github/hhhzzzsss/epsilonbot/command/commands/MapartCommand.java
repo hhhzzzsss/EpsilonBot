@@ -1,9 +1,7 @@
 package com.github.hhhzzzsss.epsilonbot.command.commands;
 
+import com.github.hhhzzzsss.epsilonbot.Config;
 import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
-import com.github.hhhzzzsss.epsilonbot.block.Section;
-import com.github.hhhzzzsss.epsilonbot.buildsync.PlotManager;
-import com.github.hhhzzzsss.epsilonbot.buildsync.PlotRepairSession;
 import com.github.hhhzzzsss.epsilonbot.command.ArgsParser;
 import com.github.hhhzzzsss.epsilonbot.command.ChatCommand;
 import com.github.hhhzzzsss.epsilonbot.command.ChatSender;
@@ -12,38 +10,74 @@ import com.github.hhhzzzsss.epsilonbot.mapart.MapartBuilderSession;
 import com.github.hhhzzzsss.epsilonbot.mapart.MapartCheckerThread;
 import com.github.hhhzzzsss.epsilonbot.mapart.MapartManager;
 import com.github.hhhzzzsss.epsilonbot.modules.BuildHandler;
-import lombok.RequiredArgsConstructor;
-
+import com.github.hhhzzzsss.epsilonbot.util.UUIDUtil;
 import java.io.IOException;
-import java.util.Map;
 import java.net.URL;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class MapartCommand extends ChatCommand {
 
     private final EpsilonBot bot;
+    private final Map<ChatSender, Instant> lastCommand = new HashMap<>();
+    private final int ratelimitMinutes = Config.getConfig().getMapartRatelimit();
+    private Instant lastDiscordCommand = Instant.now();
 
     @Override
     public String getName() {
         return "mapart";
     }
+
     @Override
     public String[] getSyntax() {
-        return new String[] {
-                "<url> [<width>] [<height>] [<dithering>]",
+        return new String[]{
+            "<url> [<width>] [<height>] [<dithering>]",
         };
     }
+
     @Override
     public String getDescription() {
         return "Builds mapart for a given image";
     }
+
     @Override
     public int getDefaultPermission() {
         return 0;
     }
 
+    private void checkRatelimit(ChatSender sender) throws CommandException {
+        Instant now = Instant.now();
+        Instant lastCommandExecution;
+
+        if (sender.getUuid().equals(UUIDUtil.NIL_UUID)) {
+            lastCommandExecution = lastDiscordCommand;
+        } else {
+            lastCommandExecution = lastCommand.getOrDefault(sender, Instant.MIN);
+        }
+
+        long difference = Duration.between(lastCommandExecution, now).toMinutes();
+
+        if (difference > ratelimitMinutes) {
+            throw new CommandException(String.format(
+                "You may not execute more than one command in a period of %d minutes.",
+                ratelimitMinutes));
+        }
+
+        if (sender.getUuid().equals(UUIDUtil.NIL_UUID)) {
+            lastDiscordCommand = now;
+        } else {
+            lastCommand.put(sender, now);
+        }
+    }
+
     @Override
     public void executeChat(ChatSender sender, String args) throws CommandException {
+        checkRatelimit(sender);
+
         ArgsParser parser = new ArgsParser(this, args);
 
         String strUrl = parser.readWord(true);
