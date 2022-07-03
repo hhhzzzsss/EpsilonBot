@@ -57,6 +57,7 @@ public class MapartBuilderSession extends BuilderSession {
         }
 
         mapartLoaded = true;
+        bot.sendPacket(new ServerboundSetCarriedItemPacket(0));
         actionQueue.add(new CommandAction(
                 "//limit -1",
                 false));
@@ -71,6 +72,7 @@ public class MapartBuilderSession extends BuilderSession {
         this.numTiles = horizDim*vertDim;
         this.loaderThread = new MapartLoaderThread(url, horizDim, vertDim, dither);
         this.loaderThread.start();
+        bot.sendPacket(new ServerboundSetCarriedItemPacket(0));
         actionQueue.add(new CommandAction(
                 "//limit -1",
                 false));
