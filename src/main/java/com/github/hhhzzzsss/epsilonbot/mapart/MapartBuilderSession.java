@@ -6,6 +6,7 @@ import com.github.hhhzzzsss.epsilonbot.build.BuilderSession;
 import com.github.hhhzzzsss.epsilonbot.build.action.*;
 import com.github.hhhzzzsss.epsilonbot.util.BlockUtils;
 import com.github.hhhzzzsss.epsilonbot.util.ItemUtils;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundSetCarriedItemPacket;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -98,6 +99,7 @@ public class MapartBuilderSession extends BuilderSession {
                 blocks = loaderThread.getBlocks();
                 maxElevation = loaderThread.getMaxElevation();
                 bot.sendChat("Successfully loaded mapart. Starting build...");
+                bot.sendPacket(new ServerboundSetCarriedItemPacket(0));
                 mapartLoaded = true;
                 saveCurrentBuildState();
             }
