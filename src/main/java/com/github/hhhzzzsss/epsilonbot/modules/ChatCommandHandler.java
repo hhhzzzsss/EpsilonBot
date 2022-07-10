@@ -68,7 +68,14 @@ public class ChatCommandHandler implements PacketListener {
 		if (!(command instanceof ChatCommand)) {
 			throw new CommandException("This command cannot be run from Minecraft chat");
 		}
-		int permission = Config.getConfig().getTrusted().contains(uuid.toString()) ? 1 : 0;
+		int permission;
+		if (Config.getConfig().getTrusted().contains(uuid.toString())) {
+			permission = 2;
+		} else if (StaffManager.isStaff(uuid)) {
+			permission = 1;
+		} else {
+			permission = 0;
+		}
 		if (command.getPermission() > permission) {
 			throw new CommandException("You don't have permission to run this command");
 		}

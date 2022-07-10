@@ -26,7 +26,7 @@ public class StopCommand extends ChatCommand {
     }
     @Override
     public int getDefaultPermission() {
-        return 1;
+        return 2;
     }
 
     @Override

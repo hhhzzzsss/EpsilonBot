@@ -8,33 +8,33 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @NoArgsConstructor
 public class CommandList {
-	private HashMap<String, Command> commands = new HashMap<>();
+	private HashMap<String, Command> commandMap = new HashMap<>();
+	private ArrayList<Command> commandList = new ArrayList<>();
 	
 	public void add(Command command) {
-		commands.put(command.getName().toLowerCase(), command);
+		commandList.add(command);
+		commandMap.put(command.getName().toLowerCase(), command);
 		for (String alias : command.getAliases()) {
-			if (!commands.containsKey(alias)) {
-				commands.put(alias.toLowerCase(), command);
+			if (!commandMap.containsKey(alias)) {
+				commandMap.put(alias.toLowerCase(), command);
 			}
 		}
 	}
 	
 	public Command get(String name) {
-		return commands.get(name);
+		return commandMap.get(name);
 	}
 	
 	public boolean contains(String name) {
-		return commands.containsKey(name);
+		return commandMap.containsKey(name);
 	}
 	
-	public Collection<Command> getCommands() {
-		return commands.values();
+	public List<Command> getCommands() {
+		return commandList;
 	}
 
 	public static File permissionsFile = new File("command-permissions.yml");
@@ -44,8 +44,8 @@ public class CommandList {
 				Yaml yaml = new Yaml();
 				Map<String, Integer> obj = yaml.load(new FileInputStream(permissionsFile));
 				for (Map.Entry<String, Integer> entry : obj.entrySet()) {
-					if (commands.containsKey(entry.getKey())) {
-						commands.get(entry.getKey()).setPermission(entry.getValue());
+					if (commandMap.containsKey(entry.getKey())) {
+						commandMap.get(entry.getKey()).setPermission(entry.getValue());
 					}
 				}
 			} catch (Throwable e) {
@@ -56,7 +56,7 @@ public class CommandList {
 	public void savePermissionsToFile() {
 		try {
 			Map<String, Object> obj = new HashMap<>();
-			for (Command command : commands.values()) {
+			for (Command command : commandMap.values()) {
 				obj.put(command.getName(), command.getPermission());
 			}
 			DumperOptions options = new DumperOptions();

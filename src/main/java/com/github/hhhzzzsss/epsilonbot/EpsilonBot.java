@@ -321,6 +321,10 @@ public class EpsilonBot {
 		commandList.add(new CancelMapartCommand(this));
 		commandList.add(new ListCommand(this));
 
+		commandList.add(new AddStaffCommand(this));
+		commandList.add(new RemoveStaffCommand(this));
+		commandList.add(new ListStaffCommand(this));
+
 		commandList.add(new RestartCommand(this));
 		commandList.add(new StopCommand(this));
 
