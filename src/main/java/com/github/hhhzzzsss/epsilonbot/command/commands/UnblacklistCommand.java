@@ -11,13 +11,13 @@ import lombok.RequiredArgsConstructor;
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class AddStaffCommand extends ChatCommand {
+public class UnblacklistCommand extends ChatCommand {
 
     private final EpsilonBot bot;
 
     @Override
     public String getName() {
-        return "addstaff";
+        return "unblacklist";
     }
     @Override
     public String[] getSyntax() {
@@ -27,7 +27,7 @@ public class AddStaffCommand extends ChatCommand {
     }
     @Override
     public String getDescription() {
-        return "Adds someone to EpsilonBot's staff list";
+        return "Removes someone from EpsilonBot's blacklist";
     }
     @Override
     public int getDefaultPermission() {
@@ -44,23 +44,23 @@ public class AddStaffCommand extends ChatCommand {
             ProfileUtils.PlayerProfileResponse response;
             try {
                 response = ProfileUtils.getPlayerProfile(args);
-                if (ModerationManager.isStaff(response.getUuid())) {
-                    bot.sendChat(response.getUsername() + " is already a staff member");
+                if (!ModerationManager.isBlacklisted(response.getUuid())) {
+                    bot.sendChat(response.getUsername() + " is not blacklisted");
                     return;
                 }
-                ModerationManager.addStaffMember(response.getUuid());
+                ModerationManager.unblacklist(response.getUuid());
             } catch (Exception e) {
-                bot.sendChat("Error adding staff: " + e.getMessage());
+                bot.sendChat("Error blacklisting: " + e.getMessage());
                 return;
             }
 
             try {
-                ModerationManager.saveStaffList();
+                ModerationManager.saveBlacklist();
             } catch (IOException e) {
-                bot.sendChat("Error saving staff list: " + e.getMessage());
+                bot.sendChat("Error saving blacklist: " + e.getMessage());
                 return;
             }
-            bot.sendChat("Successfully added " + response.getUsername() + " to staff");
+            bot.sendChat("Successfully removed " + response.getUsername() + " from the blacklist");
         })).start();
     }
 }

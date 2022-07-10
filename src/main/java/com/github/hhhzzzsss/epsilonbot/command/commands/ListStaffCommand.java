@@ -4,7 +4,7 @@ import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
 import com.github.hhhzzzsss.epsilonbot.command.ChatCommand;
 import com.github.hhhzzzsss.epsilonbot.command.ChatSender;
 import com.github.hhhzzzsss.epsilonbot.command.CommandException;
-import com.github.hhhzzzsss.epsilonbot.command.StaffManager;
+import com.github.hhhzzzsss.epsilonbot.command.ModerationManager;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -34,7 +34,7 @@ public class ListStaffCommand extends ChatCommand {
     @Override
     public void executeChat(ChatSender sender, String args) throws CommandException {
         (new Thread(() -> {
-            bot.sendChat("Current registered staff: " + String.join(", ", StaffManager.getStaffNames()));
+            bot.sendChat("Current registered staff: " + String.join(", ", ModerationManager.getStaffNames()));
         })).start();
     }
 }

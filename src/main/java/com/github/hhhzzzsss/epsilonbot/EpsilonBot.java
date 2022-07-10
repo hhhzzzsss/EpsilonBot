@@ -324,6 +324,8 @@ public class EpsilonBot {
 		commandList.add(new AddStaffCommand(this));
 		commandList.add(new RemoveStaffCommand(this));
 		commandList.add(new ListStaffCommand(this));
+		commandList.add(new BlacklistCommand(this));
+		commandList.add(new UnblacklistCommand(this));
 
 		commandList.add(new RestartCommand(this));
 		commandList.add(new StopCommand(this));

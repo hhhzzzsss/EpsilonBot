@@ -4,12 +4,11 @@ import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
 import com.github.hhhzzzsss.epsilonbot.command.ChatCommand;
 import com.github.hhhzzzsss.epsilonbot.command.ChatSender;
 import com.github.hhhzzzsss.epsilonbot.command.CommandException;
-import com.github.hhhzzzsss.epsilonbot.command.StaffManager;
+import com.github.hhhzzzsss.epsilonbot.command.ModerationManager;
 import com.github.hhhzzzsss.epsilonbot.util.ProfileUtils;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 public class RemoveStaffCommand extends ChatCommand {
@@ -45,18 +44,18 @@ public class RemoveStaffCommand extends ChatCommand {
             ProfileUtils.PlayerProfileResponse response;
             try {
                 response = ProfileUtils.getPlayerProfile(args);
-                if (!StaffManager.isStaff(response.getUuid())) {
+                if (!ModerationManager.isStaff(response.getUuid())) {
                     bot.sendChat(response.getUsername() + " is not a staff member");
                     return;
                 }
-                StaffManager.removeStaffMember(response.getUuid());
+                ModerationManager.removeStaffMember(response.getUuid());
             } catch (Exception e) {
                 bot.sendChat("Error removing staff: " + e.getMessage());
                 return;
             }
 
             try {
-                StaffManager.saveStaffList();
+                ModerationManager.saveStaffList();
             } catch (IOException e) {
                 bot.sendChat("Error saving staff list: " + e.getMessage());
                 return;

@@ -37,6 +37,9 @@ public class ChatCommandHandler implements PacketListener {
 			if (uuid.equals(bot.getUuid())) {
 				return;
 			}
+			if (ModerationManager.isBlacklisted(uuid)) {
+				return;
+			}
 			
 			Matcher m;
 			String command;
@@ -71,7 +74,7 @@ public class ChatCommandHandler implements PacketListener {
 		int permission;
 		if (Config.getConfig().getTrusted().contains(uuid.toString())) {
 			permission = 2;
-		} else if (StaffManager.isStaff(uuid)) {
+		} else if (ModerationManager.isStaff(uuid)) {
 			permission = 1;
 		} else {
 			permission = 0;

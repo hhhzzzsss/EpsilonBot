@@ -17,14 +17,21 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-public class StaffManager {
+public class ModerationManager {
     public static final Path STAFF_JSON_PATH = Path.of("staff.json");
+    public static final Path BLACKLIST_JSON_PATH = Path.of("blacklist.json");
     public static Gson gson = new Gson();
     @Getter private static HashSet<UUID> staffList = new HashSet<>();
+    @Getter private static HashSet<UUID> blacklist = new HashSet<>();
 
     static {
         try {
             loadStaffList();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            loadBlacklist();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -65,15 +72,31 @@ public class StaffManager {
     }
 
 
-//    private static class AtomicIntegerTypeAdapter implements JsonSerializer<AtomicInteger>, JsonDeserializer<AtomicInteger> {
-//        @Override public JsonElement serialize(AtomicInteger src, Type typeOfSrc, JsonSerializationContext context) {
-//            return new JsonPrimitive(src.incrementAndGet());
-//        }
-//
-//        @Override public AtomicInteger deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context)
-//                throws JsonParseException {
-//            int intValue = json.getAsInt();
-//            return new AtomicInteger(--intValue);
-//        }
-//    }
+
+    public static void loadBlacklist() throws IOException {
+        if (Files.exists(BLACKLIST_JSON_PATH)) {
+            Reader indexReader = Files.newBufferedReader(BLACKLIST_JSON_PATH);
+            Type typeToken = new TypeToken<HashSet<UUID>>() {}.getType();
+            blacklist = gson.fromJson(indexReader, typeToken);
+            indexReader.close();
+        }
+    }
+
+    public static void saveBlacklist() throws IOException {
+        Writer indexWriter = Files.newBufferedWriter(BLACKLIST_JSON_PATH);
+        indexWriter.write(gson.toJson(blacklist));
+        indexWriter.close();
+    }
+
+    public static void blacklist(UUID uuid) {
+        blacklist.add(uuid);
+    }
+
+    public static void unblacklist(UUID uuid) {
+        blacklist.remove(uuid);
+    }
+
+    public static boolean isBlacklisted(UUID uuid) {
+        return blacklist.contains(uuid);
+    }
 }
