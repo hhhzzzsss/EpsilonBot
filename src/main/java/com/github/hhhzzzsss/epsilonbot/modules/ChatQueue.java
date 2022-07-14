@@ -47,18 +47,35 @@ public class ChatQueue implements TickListener, PacketListener {
 	public static final Pattern chatSplitter = Pattern.compile("\\G\\s*([^\r\n]{1,256}(?=\\s|$)|[^\r\n]{256})");
 	public void sendChat(String chat) {
 		if (chatQueue.size() < maxChatQueue) {
-			chat = chat.trim().replace("§", "&");
+			chat = stripInvalidChars(chat).trim().replace("§", "&");
 			Matcher m = chatSplitter.matcher(chat);
 			while (m.find()) {
-				chatQueue.add(m.group(1));
+				if (m.group(1).length() <= 256) {
+					chatQueue.add(m.group(1));
+				} else {
+					chatQueue.add(m.group(1).substring(0, 256));
+				}
 			}
 		}
 	}
 	
 	public void sendCommand(String command) {
-		command = command.replace("§", "&");
+		command = stripInvalidChars(command).replace("§", "&");
 		if (command.length() <= 256 && chatQueue.size() < maxChatQueue) {
 			chatQueue.add(command);
 		}
+	}
+
+	public String stripInvalidChars(String s) {
+		StringBuilder stringBuilder = new StringBuilder();
+		for (char c : s.toCharArray()) {
+			if (!isValidChar(c)) continue;
+			stringBuilder.append(c);
+		}
+		return stringBuilder.toString();
+	}
+
+	public boolean isValidChar(char chr) {
+		return chr != '\u00a7' && chr >= ' ' && chr != '\u007f';
 	}
 }
