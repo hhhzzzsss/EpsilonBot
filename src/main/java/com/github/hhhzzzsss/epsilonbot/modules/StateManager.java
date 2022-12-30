@@ -36,6 +36,8 @@ public class StateManager implements PacketListener, TickListener, DisconnectLis
 
 	@Getter @Setter private boolean isTotalFreedom = false;
 	@Getter @Setter private boolean onFreedomServer = false;
+	private long lastTimeOnServer = System.currentTimeMillis();
+	private long nextServerJoinTime = System.currentTimeMillis();
 	
 	@Getter @Setter private boolean autoOp = true;
 	@Getter private boolean opped = true;
@@ -83,6 +85,7 @@ public class StateManager implements PacketListener, TickListener, DisconnectLis
 		}
 		else if (packet instanceof ClientboundCommandsPacket) {
 			ClientboundCommandsPacket t_packet = (ClientboundCommandsPacket) packet;
+			boolean wasOnFreedomServer = onFreedomServer;
 			onFreedomServer = false;
 			for (CommandNode node : t_packet.getNodes()) {
 				if (node.getName() == null) {
@@ -97,6 +100,10 @@ public class StateManager implements PacketListener, TickListener, DisconnectLis
 			}
 
 			if (!isTotalFreedom) onFreedomServer = true;
+
+			if (wasOnFreedomServer && !onFreedomServer) {
+				lastTimeOnServer = System.currentTimeMillis();
+			}
 		} else if (packet instanceof ClientboundOpenScreenPacket) {
 			ClientboundOpenScreenPacket t_packet = (ClientboundOpenScreenPacket) packet;
 			if (!onFreedomServer && t_packet.getName().contains("Server Selector")) {
@@ -128,10 +135,20 @@ public class StateManager implements PacketListener, TickListener, DisconnectLis
 	}
 	
 	public void rectify() {
-		nextRectifyTime = System.currentTimeMillis();
-		if (!onFreedomServer) {
+		long currentTime = System.currentTimeMillis();
+		nextRectifyTime = currentTime;
+		if (!onFreedomServer && currentTime >= nextServerJoinTime) {
 			bot.sendPacket(new ServerboundSetCarriedItemPacket(0));
 			bot.sendPacket(new ServerboundUseItemPacket(Hand.MAIN_HAND));
+			if (currentTime-lastTimeOnServer > 10*1000) {
+				nextServerJoinTime = currentTime + 10*1000;
+			}
+			if (currentTime-lastTimeOnServer > 60*1000) {
+				nextServerJoinTime = currentTime + 60*1000;
+			}
+			if (currentTime-lastTimeOnServer > 5*60*1000) {
+				nextServerJoinTime = currentTime + 5*60*1000;
+			}
 			nextRectifyTime += commandDelay;
 			return;
 		}
