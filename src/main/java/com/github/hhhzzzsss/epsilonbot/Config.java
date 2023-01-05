@@ -28,6 +28,7 @@ public class Config {
     int mapartX;
     int mapartZ;
     String commandPrefix = "`";
+    ArrayList<String> alternatePrefixes;
     String warpName = "epsilon_mapart";
     ArrayList<String> trusted;
 
@@ -45,6 +46,7 @@ public class Config {
         Constructor constructor = new Constructor(Config.class);
         TypeDescription typeDescription = new TypeDescription(Config.class);
         typeDescription.addPropertyParameters("trusted", String.class);
+        typeDescription.addPropertyParameters("alternatePrefixes", String.class);
         constructor.addTypeDescription(typeDescription);
         Yaml yaml = new Yaml(constructor);
         InputStream is = null;

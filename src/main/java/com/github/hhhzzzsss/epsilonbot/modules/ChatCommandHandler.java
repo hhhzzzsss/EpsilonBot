@@ -10,6 +10,7 @@ import com.github.steveice10.packetlib.packet.Packet;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,13 +19,14 @@ public class ChatCommandHandler implements PacketListener {
 	private final EpsilonBot bot;
 	private final CommandList commandList;
 	@Getter private String prefix;
+	@Getter private ArrayList<String> alternatePrefixes;
 	@Getter private Pattern chatCommandPattern;
 	@Getter private Pattern discordCommandPattern;
 	
-	public ChatCommandHandler(EpsilonBot bot, CommandList commandList, String prefix) {
+	public ChatCommandHandler(EpsilonBot bot, CommandList commandList, String prefix, ArrayList<String> alternatePrefixes) {
 		this.bot = bot;
 		this.commandList = commandList;
-		this.setPrefix(prefix);
+		this.setPrefix(prefix, alternatePrefixes);
 	}
 	
 	public void onPacket(Packet packet) {
@@ -80,7 +82,7 @@ public class ChatCommandHandler implements PacketListener {
 			permission = 0;
 		}
 		if (command.getPermission() > permission) {
-			throw new CommandException("You don't have permission to run this command");
+			throw new CommandException("You don'te have permission to run this command");
 		}
 		
 		((ChatCommand) command).executeChat(new ChatSender(uuid, permission), args);
@@ -91,9 +93,15 @@ public class ChatCommandHandler implements PacketListener {
 	 *
 	 * @param prefix The command prefix
 	 */
-	public void setPrefix(String prefix) {
+	public void setPrefix(String prefix, ArrayList<String> alternatePrefixes) {
 		this.prefix = prefix;
-		chatCommandPattern = Pattern.compile(String.format(".*(?: »|:) +%s(\\S+)(.*)?", prefix));
-		discordCommandPattern = Pattern.compile(String.format("\\[Discord\\] .*: %s(\\S+)(.*)?", prefix));
+		this.alternatePrefixes = alternatePrefixes;
+		ArrayList<String> allPrefixes = new ArrayList<>();
+		allPrefixes.add(prefix);
+		allPrefixes.addAll(alternatePrefixes);
+		String prefixMatchingString = String.join("|", allPrefixes);
+
+		chatCommandPattern = Pattern.compile(String.format(".*(?: »|:) +(?:%s)(\\S+)(.*)?", prefixMatchingString));
+		discordCommandPattern = Pattern.compile(String.format("\\[Discord\\] .*: (?:%s)(\\S+)(.*)?", prefixMatchingString));
 	}
 }

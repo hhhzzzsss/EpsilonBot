@@ -53,7 +53,7 @@ public class EpsilonBot {
 	@Getter protected PositionManager posManager = new PositionManager(this);
 	@Getter protected World world = new World(this);
 	@Getter protected CommandList commandList = new CommandList();
-	@Getter protected ChatCommandHandler chatCommandHandler = new ChatCommandHandler(this, commandList, Config.getConfig().commandPrefix);
+	@Getter protected ChatCommandHandler chatCommandHandler = new ChatCommandHandler(this, commandList, Config.getConfig().commandPrefix, Config.getConfig().getAlternatePrefixes());
 	@Getter protected BuildHandler buildHandler = new BuildHandler(this);
 	@Getter protected PlayerListTracker playerListTracker = new PlayerListTracker();
 	
