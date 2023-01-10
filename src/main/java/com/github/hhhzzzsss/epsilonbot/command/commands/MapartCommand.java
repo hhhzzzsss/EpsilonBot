@@ -1,9 +1,6 @@
 package com.github.hhhzzzsss.epsilonbot.command.commands;
 
 import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
-import com.github.hhhzzzsss.epsilonbot.block.Section;
-import com.github.hhhzzzsss.epsilonbot.buildsync.PlotManager;
-import com.github.hhhzzzsss.epsilonbot.buildsync.PlotRepairSession;
 import com.github.hhhzzzsss.epsilonbot.command.ArgsParser;
 import com.github.hhhzzzsss.epsilonbot.command.ChatCommand;
 import com.github.hhhzzzsss.epsilonbot.command.ChatSender;
@@ -15,8 +12,8 @@ import com.github.hhhzzzsss.epsilonbot.modules.BuildHandler;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
-import java.util.Map;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @RequiredArgsConstructor
 public class MapartCommand extends ChatCommand {
@@ -30,7 +27,7 @@ public class MapartCommand extends ChatCommand {
     @Override
     public String[] getSyntax() {
         return new String[] {
-                "<url> [<width>] [<height>] [<dithering>]",
+                "<url> [<width>] [<height>] [<flags>]",
         };
     }
     @Override
@@ -41,25 +38,35 @@ public class MapartCommand extends ChatCommand {
     public int getDefaultPermission() {
         return 0;
     }
+    @Override
+    public String[] getFlags() {
+        return new String[]{
+                "--NO_DITHER",
+                "--USE_TRANSPARENCY",
+        };
+    }
 
     @Override
     public void executeChat(ChatSender sender, String args) throws CommandException {
         ArgsParser parser = new ArgsParser(this, args);
 
+        AtomicBoolean dithering = new AtomicBoolean(true);
+        AtomicBoolean useTransparency = new AtomicBoolean(false);
+        parser.setFlagParser((String flag) -> {
+            if (flag.equalsIgnoreCase("no_dither")) {
+                dithering.set(false);
+            } else if (flag.equalsIgnoreCase("use_transparency")) {
+                useTransparency.set(true);
+            } else {
+                throw parser.getGenericError();
+            }
+        });
+
         String strUrl = parser.readWord(true);
         Integer width = parser.readInt(false);
         Integer height = parser.readInt(false);
-        String ditheringArg = parser.readWord(false);
-        boolean dithering;
-        if (ditheringArg == null) {
-            dithering = true;
-        } else if (ditheringArg.equalsIgnoreCase("true")) {
-            dithering = true;
-        } else if (ditheringArg.equalsIgnoreCase("false")) {
-            dithering = false;
-        } else {
-            throw parser.getError("true or false");
-        }
+        parser.end();
+
         if (strUrl.startsWith("data:")) {
             throw new CommandException("Cannot build mapart from data: URLs. Please upload the image to a image sharing site like https://imgur.com/ and use the URL from there.");
         }
@@ -95,7 +102,7 @@ public class MapartCommand extends ChatCommand {
             int mapIdx = MapartManager.getMapartIndex().size();
             MapartBuilderSession mbs;
             try {
-                mbs = new MapartBuilderSession(bot, mapIdx, url, width, height, dithering);
+                mbs = new MapartBuilderSession(bot, mapIdx, url, width, height, dithering.get(), useTransparency.get());
             } catch (IOException e) {
                 throw new CommandException(e.getMessage());
             }
@@ -104,7 +111,7 @@ public class MapartCommand extends ChatCommand {
         } else {
             MapartCheckerThread mct;
             try {
-                mct = new MapartCheckerThread(bot, url, width, height, dithering);
+                mct = new MapartCheckerThread(bot, url, width, height, dithering.get(), useTransparency.get());
             } catch (IOException e) {
                 throw new CommandException(e.getMessage());
             }

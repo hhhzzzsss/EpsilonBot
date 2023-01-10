@@ -24,6 +24,7 @@ public class MapartBuildState {
             .create();
 
     public URL url;
+    public boolean useTransparency = false;
     public int mapIdx;
     public int originX;
     public int originZ;

@@ -82,7 +82,7 @@ public class ChatCommandHandler implements PacketListener {
 			permission = 0;
 		}
 		if (command.getPermission() > permission) {
-			throw new CommandException("You don'te have permission to run this command");
+			throw new CommandException("You don't have permission to run this command");
 		}
 		
 		((ChatCommand) command).executeChat(new ChatSender(uuid, permission), args);

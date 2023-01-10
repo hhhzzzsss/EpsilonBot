@@ -20,6 +20,7 @@ import java.net.URL;
 
 public class MapartBuilderSession extends BuilderSession {
     @Getter URL url;
+    boolean useTransparency;
     @Getter int mapIdx;
     int originX;
     int originZ;
@@ -37,6 +38,7 @@ public class MapartBuilderSession extends BuilderSession {
     public MapartBuilderSession(EpsilonBot bot, MapartBuildState state) {
         super(bot);
         this.url = state.url;
+        this.useTransparency = state.useTransparency;
         this.mapIdx = state.mapIdx;
         this.originX = state.originX;
         this.originZ = state.originZ;
@@ -63,14 +65,15 @@ public class MapartBuilderSession extends BuilderSession {
                 false));
     }
 
-    public MapartBuilderSession(EpsilonBot bot, int mapIdx, URL url, int horizDim, int vertDim, boolean dither) throws IOException {
+    public MapartBuilderSession(EpsilonBot bot, int mapIdx, URL url, int horizDim, int vertDim, boolean dither, boolean useTransparency) throws IOException {
         super(bot);
         this.url = url;
+        this.useTransparency = useTransparency;
         this.mapIdx = mapIdx;
         this.originX = Math.floorDiv(Config.getConfig().getMapartX()+64, 128)*128-64;
         this.originZ = Math.floorDiv(Config.getConfig().getMapartZ()+64, 128)*128-64 + 256*mapIdx - 1;
         this.numTiles = horizDim*vertDim;
-        this.loaderThread = new MapartLoaderThread(url, horizDim, vertDim, dither);
+        this.loaderThread = new MapartLoaderThread(url, horizDim, vertDim, dither, useTransparency);
         this.loaderThread.start();
         bot.sendPacket(new ServerboundSetCarriedItemPacket(0));
         actionQueue.add(new CommandAction(
@@ -220,18 +223,17 @@ public class MapartBuilderSession extends BuilderSession {
         public final String name;
     }
     private void loadTileBuild(int idx) {
-        boolean empty = true;
+        boolean topEmpty = true;
         for (int y=100; y<=100+maxElevation; y++) {
             for (int x=128*idx; x<128*idx+127; x++) {
                 for (int z = 0; z < 129; z++) {
                     if (bot.getWorld().getBlock(originX+x, y, originZ+z) != 0) {
-                        empty = false;
+                        topEmpty = false;
                     }
                 }
             }
         }
-
-        if (!empty) {
+        if (!topEmpty) {
             actionQueue.add(new CommandAction(
                     String.format("//pos1 %d,%d,%d", originX + 128*idx, 100, originZ),
                     false));
@@ -241,6 +243,30 @@ public class MapartBuilderSession extends BuilderSession {
             actionQueue.add(new CommandAction(
                     "//set air",
                     true));
+        }
+
+        if (useTransparency) {
+            int highestGroundBlock = -1;
+            for (int y = 0; y < 100; y++) {
+                for (int x = 128 * idx; x < 128 * idx + 127; x++) {
+                    for (int z = 0; z < 129; z++) {
+                        if (bot.getWorld().getBlock(originX + x, y, originZ + z) != 0) {
+                            highestGroundBlock = y;
+                        }
+                    }
+                }
+            }
+            if (highestGroundBlock >= 0) {
+                actionQueue.add(new CommandAction(
+                        String.format("//pos1 %d,%d,%d", originX + 128 * idx, 0, originZ),
+                        false));
+                actionQueue.add(new CommandAction(
+                        String.format("//pos2 %d,%d,%d", originX + 128 * idx + 127, highestGroundBlock, originZ + 128),
+                        false));
+                actionQueue.add(new CommandAction(
+                        "//set air",
+                        true));
+            }
         }
 
         for (int x=128*idx; x<128*idx+128; x++) {
@@ -309,6 +335,7 @@ public class MapartBuilderSession extends BuilderSession {
     public void saveCurrentBuildState() {
         MapartBuildState state = new MapartBuildState();
         state.url = this.url;
+        state.useTransparency = this.useTransparency;
         state.mapIdx = this.mapIdx;
         state.originX = this.originX;
         state.originZ = this.originZ;

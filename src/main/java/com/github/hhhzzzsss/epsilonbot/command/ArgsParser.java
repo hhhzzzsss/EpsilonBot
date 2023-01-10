@@ -2,6 +2,7 @@ package com.github.hhhzzzsss.epsilonbot.command;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +14,16 @@ public class ArgsParser {
 	private final Command command;
 	private final String args;
 	@Getter private int position = 0;
+	@Getter @Setter private FlagParser flagParser = null;
 	
 	public static final Pattern stringPattern = Pattern.compile("^\\s*(.+)", Pattern.DOTALL);
 	public static final Pattern wordPattern = Pattern.compile("^\\s*(\\S+)");
-	public static final Pattern flagPattern = Pattern.compile("^\\s*-([^\\s0-9]\\S*)");
+	public static final Pattern shortFlagPattern = Pattern.compile("^\\s*-([^\\s0-9-]\\S*)");
+	public static final Pattern longFlagPattern = Pattern.compile("^\\s*--([^\\s0-9-]\\S*)");
+	public static final Pattern emptyPattern = Pattern.compile("^(\\s*)");
 	
 	public String readString(boolean required) throws CommandException {
+		parseFlags();
 		String arg = findPattern(stringPattern);
 		if (arg == null && required) {
 			throw getError("string");
@@ -28,6 +33,7 @@ public class ArgsParser {
 	}
 	
 	public String readWord(boolean required) throws CommandException {
+		parseFlags();
 		String arg = findPattern(wordPattern);
 		if (arg == null && required) {
 			throw getGenericError();
@@ -37,6 +43,7 @@ public class ArgsParser {
 	}
 	
 	public Integer readInt(boolean required) throws CommandException {
+		parseFlags();
 		String arg = findPattern(wordPattern);
 		if (arg == null) {
 			if (required) {
@@ -56,6 +63,7 @@ public class ArgsParser {
 	}
 	
 	public Double readDouble(boolean required) throws CommandException {
+		parseFlags();
 		String arg = findPattern(wordPattern);
 		if (arg == null) {
 			if (required) {
@@ -75,6 +83,7 @@ public class ArgsParser {
 	}
 	
 	public <T extends Enum<T>> T readEnum(Class<T> enumType, boolean required) throws CommandException {
+		parseFlags();
 		String arg = findPattern(wordPattern);
 		if (arg == null && required) {
 			throw getError(enumType.getSimpleName());
@@ -87,15 +96,33 @@ public class ArgsParser {
 			throw getError(enumType.getSimpleName());
 		}
 	}
-	
-	public List<String> readFlags() {
-		List<String> flags = new ArrayList<>();
-		String flag = findPattern(flagPattern);
-		while (flag != null) {
-			flags.add(flag);
-			flag = findPattern(flagPattern);
+
+	public void end() throws CommandException {
+		parseFlags();
+		if (position < args.length() && !emptyPattern.matcher(args).region(position, args.length()).matches()) {
+			throw getError("end of command");
 		}
-		return flags;
+	}
+	
+	public void parseFlags() throws CommandException {
+		if (flagParser != null) {
+			boolean foundFlag = true;
+			while (foundFlag) {
+				foundFlag = false;
+				String shortFlag = findPattern(shortFlagPattern);
+				String longFlag = findPattern(longFlagPattern);
+				if (shortFlag != null) {
+					foundFlag = true;
+					for (String c : shortFlag.split("")) {
+						flagParser.parse(c);
+					}
+				}
+				if (longFlag != null) {
+					foundFlag = true;
+					flagParser.parse(longFlag);
+				}
+			}
+		}
 	}
 	
 	private String findPattern(Pattern pattern) {
