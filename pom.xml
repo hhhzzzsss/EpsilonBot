@@ -72,6 +72,11 @@
       <artifactId>imgscalr-lib</artifactId>
       <version>4.2</version>
     </dependency>
+    <dependency>
+      <groupId>com.microsoft.azure</groupId>
+      <artifactId>msal4j</artifactId>
+      <version>1.13.2</version>
+    </dependency>
   </dependencies>
 
   <build>

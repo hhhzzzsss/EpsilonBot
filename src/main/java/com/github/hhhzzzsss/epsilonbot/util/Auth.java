@@ -2,7 +2,6 @@ package com.github.hhhzzzsss.epsilonbot.util;
 
 import com.github.steveice10.mc.auth.service.AuthenticationService;
 import com.github.steveice10.mc.auth.service.MojangAuthenticationService;
-import com.github.steveice10.mc.auth.service.MsaAuthenticationService;
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
 
 public class Auth {
@@ -22,7 +21,7 @@ public class Auth {
 	}
 
 	public static MinecraftProtocol loginMSA(String username, String password) throws Exception {
-		AuthenticationService authService = new MsaAuthenticationService(OAUTH_CLIENT_ID);
+		AuthenticationService authService = new CustomMsaAuthenticationService();
 		authService.setUsername(username);
 		authService.setPassword(password);
 		authService.login();
