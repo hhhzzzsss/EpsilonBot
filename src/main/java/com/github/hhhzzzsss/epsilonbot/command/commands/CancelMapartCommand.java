@@ -53,6 +53,9 @@ public class CancelMapartCommand extends ChatCommand {
         } else {
             ArgsParser parser = new ArgsParser(this, args);
             int idx = parser.readInt(true);
+            if (idx <= 0) {
+                throw new CommandException("Index cannot be less than 1");
+            }
             if (idx > bot.getBuildHandler().getMapartQueue().size()) {
                 throw new CommandException("Index is larger than queue size");
             }
