@@ -2,6 +2,7 @@ package com.github.hhhzzzsss.epsilonbot.modules;
 
 import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
 import com.github.hhhzzzsss.epsilonbot.listeners.*;
+import com.github.steveice10.mc.protocol.data.game.ClientCommand;
 import com.github.steveice10.mc.protocol.data.game.command.CommandNode;
 import com.github.steveice10.mc.protocol.data.game.entity.EntityEvent;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
@@ -14,8 +15,10 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundCo
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundRespawnPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundEntityEventPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundSetHealthPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundOpenScreenPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundGameEventPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientCommandPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundContainerClickPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundSetCarriedItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundUseItemPacket;
@@ -116,6 +119,10 @@ public class StateManager implements PacketListener, TickListener, DisconnectLis
 						new ItemStack(0),
 						new TreeMap<>()
 				));
+			}
+		} else if (packet instanceof ClientboundSetHealthPacket) {
+			if (((ClientboundSetHealthPacket) packet).getHealth() <= 0.0) {
+				bot.sendPacket(new ServerboundClientCommandPacket(ClientCommand.RESPAWN));
 			}
 		}
 	}
