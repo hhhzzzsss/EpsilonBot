@@ -44,4 +44,8 @@ public class MapartQueueState {
         indexWriter.write(gson.toJson(states));
         indexWriter.close();
     }
+
+    public static void deleteQueueStates() throws IOException {
+        Files.delete(QUEUE_STATE_PATH);
+    }
 }

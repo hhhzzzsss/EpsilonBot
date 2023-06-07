@@ -157,7 +157,7 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
     }
 
     private void checkMapart() {
-        if (MapartQueueState.queueStatesExist()) {
+        if (MapartQueueState.queueStatesExist() && mapartQueue.isEmpty()) {
             try {
                 List<MapartQueueState> queueStates = MapartQueueState.loadQueueStates();
                 for (MapartQueueState queueState : queueStates) {
@@ -207,11 +207,19 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
     }
 
     public void saveQueueStates() {
-        List<MapartQueueState> states = mapartQueue.stream().map(mct -> mct.getQueueState()).collect(Collectors.toList());
-        try {
-            MapartQueueState.saveQueueStates(states);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (mapartQueue.isEmpty()) {
+            try {
+                MapartQueueState.deleteQueueStates();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            List<MapartQueueState> states = mapartQueue.stream().map(mct -> mct.getQueueState()).collect(Collectors.toList());
+            try {
+                MapartQueueState.saveQueueStates(states);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
