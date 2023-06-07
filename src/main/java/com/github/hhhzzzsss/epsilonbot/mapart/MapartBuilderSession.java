@@ -350,7 +350,6 @@ public class MapartBuilderSession extends BuilderSession {
         }
     }
 
-    // todo
     @Override
     public void sendStatusMessage() {
         bot.sendChat("Currently building mapart for: " + url.toString());

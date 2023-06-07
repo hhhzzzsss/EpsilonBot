@@ -1,10 +1,6 @@
 package com.github.hhhzzzsss.epsilonbot.mapart;
 
-import com.github.hhhzzzsss.epsilonbot.buildsync.PlotCoord;
 import com.google.gson.*;
-import com.google.gson.reflect.TypeToken;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 import java.awt.*;
 import java.io.IOException;
@@ -14,7 +10,6 @@ import java.lang.reflect.Type;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 
 public class MapartBuildState {
     public static final Path STATE_PATH = Path.of("mapartState.json");
