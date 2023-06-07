@@ -60,4 +60,14 @@ public class MapartCheckerThread extends Thread {
         int mapIdx = MapartManager.getMapartIndex().size();
         return new MapartBuilderSession(bot, mapIdx, url, horizDim, vertDim, dither, useTransparency);
     }
+
+    public MapartQueueState getQueueState() {
+        MapartQueueState queueState = new MapartQueueState();
+        queueState.url = this.url;
+        queueState.horizDim = this.horizDim;
+        queueState.vertDim = this.vertDim;
+        queueState.dither = this.dither;
+        queueState.useTransparency = this.useTransparency;
+        return queueState;
+    }
 }

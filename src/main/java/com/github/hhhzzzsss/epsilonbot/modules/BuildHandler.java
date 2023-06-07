@@ -13,6 +13,7 @@ import com.github.hhhzzzsss.epsilonbot.listeners.TickListener;
 import com.github.hhhzzzsss.epsilonbot.mapart.MapartBuildState;
 import com.github.hhhzzzsss.epsilonbot.mapart.MapartBuilderSession;
 import com.github.hhhzzzsss.epsilonbot.mapart.MapartCheckerThread;
+import com.github.hhhzzzsss.epsilonbot.mapart.MapartQueueState;
 import com.github.hhhzzzsss.epsilonbot.util.ChatUtils;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSetTimePacket;
@@ -24,6 +25,7 @@ import lombok.Setter;
 import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -155,6 +157,17 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
     }
 
     private void checkMapart() {
+        if (MapartQueueState.queueStatesExist()) {
+            try {
+                List<MapartQueueState> queueStates = MapartQueueState.loadQueueStates();
+                for (MapartQueueState queueState : queueStates) {
+                    try {
+                        mapartQueue.add(new MapartCheckerThread(bot, queueState.url, queueState.horizDim, queueState.vertDim, queueState.dither, queueState.useTransparency));
+                    } catch (IOException e) {}
+                }
+            } catch (IOException e) {}
+        }
+
         if (MapartBuildState.buildStateExists()) {
             try {
                 setBuilderSession(new MapartBuilderSession(bot, MapartBuildState.loadBuildState()));
@@ -165,6 +178,7 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
             try {
                 bot.sendChat("Loading queued mapart for " + mapartQueue.peek().getUrl().toString());
                 setBuilderSession(mapartQueue.poll().getBuilderSession());
+                saveQueueStates();
             } catch (IOException e) {
                 bot.sendChat("Exception occured while loading queued mapart: " + e.getMessage());
             }
@@ -178,6 +192,7 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
                 bot.sendChat("Error while loading mapart: " + mct.getException().getMessage());
             } else {
                 mapartQueue.add(mct);
+                saveQueueStates();
                 bot.sendChat("Queued mapart");
             }
         }
@@ -189,5 +204,14 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
         }
         mct.start();
         unloadedMapartQueue.add(mct);
+    }
+
+    public void saveQueueStates() {
+        List<MapartQueueState> states = mapartQueue.stream().map(mct -> mct.getQueueState()).collect(Collectors.toList());
+        try {
+            MapartQueueState.saveQueueStates(states);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
