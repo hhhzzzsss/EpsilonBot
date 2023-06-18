@@ -60,6 +60,25 @@ public class ChatQueue implements TickListener, PacketListener {
 			}
 		}
 	}
+
+	public void sendMsg(String message, String targetPlayer) {
+		if (chatQueue.size() < maxChatQueue) {
+			message = message.trim().replace("§", "&");
+			String msgPre = String.format("/msg %s ", targetPlayer);
+			int limit = 256-msgPre.length();
+			Pattern msgSplitter = Pattern.compile(String.format("\\G\\s*([^\\r\\n]{1,%d}(?=\\s|$)|[^\\r\\n]{%d})", limit, limit));
+			Matcher m = msgSplitter.matcher(message);
+			while (m.find()) {
+				String chatPiece = msgPre + stripInvalidChars(m.group(1));
+				if (chatPiece.length() <= 256) {
+					chatQueue.add(chatPiece);
+				} else {
+					chatQueue.add(chatPiece.substring(0, 256));
+				}
+				System.out.println(m.group(1));
+			}
+		}
+	}
 	
 	public void sendCommand(String command) {
 		command = stripInvalidChars(command).replace("§", "&");

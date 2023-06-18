@@ -35,7 +35,7 @@ public class ReloadIndexCommand extends ChatCommand {
     public void executeChat(ChatSender sender, String args) throws CommandException {
         try {
             PlotManager.loadIndex();
-            bot.sendChat("Reloaded plot index");
+            bot.sendResponse("Reloaded plot index", sender.getMsgSender());
         } catch (IOException e) {
             throw new CommandException(e.getMessage());
         }

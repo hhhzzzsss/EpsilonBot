@@ -45,22 +45,22 @@ public class RemoveStaffCommand extends ChatCommand {
             try {
                 response = ProfileUtils.getPlayerProfile(args);
                 if (!ModerationManager.isStaff(response.getUuid())) {
-                    bot.sendChat(response.getUsername() + " is not a staff member");
+                    bot.sendResponse(response.getUsername() + " is not a staff member", sender.getMsgSender());
                     return;
                 }
                 ModerationManager.removeStaffMember(response.getUuid());
             } catch (Exception e) {
-                bot.sendChat("Error removing staff: " + e.getMessage());
+                bot.sendResponse("Error removing staff: " + e.getMessage(), sender.getMsgSender());
                 return;
             }
 
             try {
                 ModerationManager.saveStaffList();
             } catch (IOException e) {
-                bot.sendChat("Error saving staff list: " + e.getMessage());
+                bot.sendResponse("Error saving staff list: " + e.getMessage(), sender.getMsgSender());
                 return;
             }
-            bot.sendChat("Successfully removed " + response.getUsername() + " from staff");
+            bot.sendResponse("Successfully removed " + response.getUsername() + " from staff", sender.getMsgSender());
         })).start();
     }
 }

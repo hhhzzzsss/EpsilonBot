@@ -41,17 +41,17 @@ public class ShowQueueCommand extends ChatCommand {
         ArrayList<String> queuedItems = new ArrayList<>();
         if (bot.getBuildHandler().getBuilderSession() != null && bot.getBuildHandler().getBuilderSession() instanceof MapartBuilderSession) {
             MapartBuilderSession mbs = (MapartBuilderSession) bot.getBuildHandler().getBuilderSession();
-            queuedItems.add("Current: " + truncateUrl(mbs.getUrl().toString()));
+            queuedItems.add("Current: " + (mbs.getRequester()==null ? truncateUrl(mbs.getUrl().toString()) : String.format("[Requested by %s]", mbs.getRequester())));
         }
         int index = 1;
         for (MapartCheckerThread mct : bot.getBuildHandler().getMapartQueue()) {
-            queuedItems.add(index + ": " + truncateUrl(mct.getUrl().toString()));
+            queuedItems.add(index + ": " + (mct.getRequester()==null ? truncateUrl(mct.getUrl().toString()) : String.format("[Requested by %s]", mct.getRequester())));
             index++;
         }
         if (queuedItems.isEmpty()) {
-            bot.sendChat("Queue is empty");
+            bot.sendResponse("Queue is empty", sender.getMsgSender());
         } else {
-            bot.sendChat(String.join(" | ", queuedItems));
+            bot.sendResponse(String.join(" | ", queuedItems), sender.getMsgSender());
         }
     }
 

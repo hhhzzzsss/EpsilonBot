@@ -25,7 +25,6 @@ import lombok.Setter;
 import net.kyori.adventure.text.Component;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -162,7 +161,7 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
                 List<MapartQueueState> queueStates = MapartQueueState.loadQueueStates();
                 for (MapartQueueState queueState : queueStates) {
                     try {
-                        mapartQueue.add(new MapartCheckerThread(bot, queueState.url, queueState.horizDim, queueState.vertDim, queueState.dither, queueState.useTransparency));
+                        mapartQueue.add(new MapartCheckerThread(bot, queueState.url, queueState.horizDim, queueState.vertDim, queueState.dither, queueState.useTransparency, queueState.requester));
                     } catch (IOException e) {}
                 }
             } catch (IOException e) {}
@@ -176,7 +175,8 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
             }
         } else if (!mapartQueue.isEmpty()) {
             try {
-                bot.sendChat("Loading queued mapart for " + mapartQueue.peek().getUrl().toString());
+                String nextRequester = mapartQueue.peek().getRequester();
+                bot.sendChat("Loading queued mapart for " + (nextRequester==null ? mapartQueue.peek().getUrl().toString() : String.format("[Requested by %s]", nextRequester)));
                 setBuilderSession(mapartQueue.poll().getBuilderSession());
                 saveQueueStates();
             } catch (IOException e) {
@@ -189,11 +189,11 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
         while (!unloadedMapartQueue.isEmpty() && !unloadedMapartQueue.peek().isAlive()) {
             MapartCheckerThread mct = unloadedMapartQueue.poll();
             if (mct.getException() != null) {
-                bot.sendChat("Error while loading mapart: " + mct.getException().getMessage());
+                bot.sendResponse("Error while loading mapart: " + mct.getException().getMessage(), mct.getRequester());
             } else {
                 mapartQueue.add(mct);
                 saveQueueStates();
-                bot.sendChat("Queued mapart");
+                bot.sendResponse("Queued mapart", mct.getRequester());
             }
         }
     }

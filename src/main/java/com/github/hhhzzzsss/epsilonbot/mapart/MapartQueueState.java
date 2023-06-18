@@ -22,6 +22,7 @@ public class MapartQueueState {
     public int vertDim;
     public boolean dither;
     public boolean useTransparency;
+    public String requester;
 
     public static boolean queueStatesExist() {
         return Files.exists(QUEUE_STATE_PATH);

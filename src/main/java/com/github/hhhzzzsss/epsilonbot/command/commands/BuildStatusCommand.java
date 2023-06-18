@@ -31,9 +31,9 @@ public class BuildStatusCommand extends ChatCommand {
     @Override
     public void executeChat(ChatSender sender, String args) throws CommandException {
         if (bot.getBuildHandler().getBuilderSession() != null) {
-            bot.getBuildHandler().getBuilderSession().sendStatusMessage();
+            bot.getBuildHandler().getBuilderSession().sendStatusMessage(msg -> bot.sendResponse(msg, sender.getMsgSender()));
         } else {
-            bot.sendCommand("Nothing is currently being built");
+            bot.sendResponse("Nothing is currently being built", sender.getMsgSender());
         }
     }
 }

@@ -45,22 +45,22 @@ public class AddStaffCommand extends ChatCommand {
             try {
                 response = ProfileUtils.getPlayerProfile(args);
                 if (ModerationManager.isStaff(response.getUuid())) {
-                    bot.sendChat(response.getUsername() + " is already a staff member");
+                    bot.sendResponse(response.getUsername() + " is already a staff member", sender.getMsgSender());
                     return;
                 }
                 ModerationManager.addStaffMember(response.getUuid());
             } catch (Exception e) {
-                bot.sendChat("Error adding staff: " + e.getMessage());
+                bot.sendResponse("Error adding staff: " + e.getMessage(), sender.getMsgSender());
                 return;
             }
 
             try {
                 ModerationManager.saveStaffList();
             } catch (IOException e) {
-                bot.sendChat("Error saving staff list: " + e.getMessage());
+                bot.sendResponse("Error saving staff list: " + e.getMessage(), sender.getMsgSender());
                 return;
             }
-            bot.sendChat("Successfully added " + response.getUsername() + " to staff");
+            bot.sendResponse("Successfully added " + response.getUsername() + " to staff", sender.getMsgSender());
         })).start();
     }
 }

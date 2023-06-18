@@ -17,8 +17,9 @@ public class MapartCheckerThread extends Thread {
     @Getter int vertDim;
     @Getter boolean dither;
     @Getter boolean useTransparency;
+    @Getter String requester;
     @Getter Throwable exception;
-    public MapartCheckerThread(EpsilonBot bot, URL url, int horizDim, int vertDim, boolean dither, boolean useTransparency) throws IOException {
+    public MapartCheckerThread(EpsilonBot bot, URL url, int horizDim, int vertDim, boolean dither, boolean useTransparency, String requester) throws IOException {
         this.bot = bot;
         this.url = url;
         if (!this.url.getProtocol().startsWith("http")) {
@@ -28,6 +29,7 @@ public class MapartCheckerThread extends Thread {
         this.vertDim = vertDim;
         this.dither = dither;
         this.useTransparency = useTransparency;
+        this.requester = requester;
 
         setDefaultUncaughtExceptionHandler((t, e) -> {
             exception = e;
@@ -58,7 +60,7 @@ public class MapartCheckerThread extends Thread {
 
     public MapartBuilderSession getBuilderSession() throws IOException {
         int mapIdx = MapartManager.getMapartIndex().size();
-        return new MapartBuilderSession(bot, mapIdx, url, horizDim, vertDim, dither, useTransparency);
+        return new MapartBuilderSession(bot, mapIdx, url, horizDim, vertDim, dither, useTransparency, requester);
     }
 
     public MapartQueueState getQueueState() {
@@ -68,6 +70,7 @@ public class MapartCheckerThread extends Thread {
         queueState.vertDim = this.vertDim;
         queueState.dither = this.dither;
         queueState.useTransparency = this.useTransparency;
+        queueState.requester = this.requester;
         return queueState;
     }
 }

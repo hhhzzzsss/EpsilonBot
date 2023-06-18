@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class PlotBuilderSession extends BuilderSession {
@@ -369,11 +370,11 @@ public class PlotBuilderSession extends BuilderSession {
         return progress;
     }
 
-    public void sendStatusMessage() {
+    public void sendStatusMessage(Consumer<? super String> sendFunc) {
         int totalBlocks = getTotalRequiredBlocks();
         int currentProgress = getCurrentProgress();
-        bot.getChatQueue().sendChat("Currently building: " + plotName);
-        bot.getChatQueue().sendChat(String.format(
+        sendFunc.accept("Currently building: " + plotName);
+        sendFunc.accept(String.format(
                 "This build requires %d block placements in total, and I've placed about %d of them so far, so I'm about %.2f%% done. Estimated build time remaining: %.2f hrs.",
                 totalBlocks,
                 currentProgress,

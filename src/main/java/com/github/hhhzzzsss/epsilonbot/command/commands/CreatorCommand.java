@@ -31,6 +31,6 @@ public class CreatorCommand extends ChatCommand {
 
     @Override
     public void executeChat(ChatSender sender, String args) throws CommandException {
-        bot.sendChat("EpsilonBot was created by hhhzzzsss");
+        bot.sendResponse("EpsilonBot was created by hhhzzzsss", sender.getMsgSender());
     }
 }

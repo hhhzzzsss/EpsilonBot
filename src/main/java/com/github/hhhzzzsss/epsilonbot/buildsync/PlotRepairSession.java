@@ -6,6 +6,8 @@ import com.github.hhhzzzsss.epsilonbot.build.action.CommandAction;
 import com.github.hhhzzzsss.epsilonbot.util.BlockUtils;
 import com.github.hhhzzzsss.epsilonbot.util.PlotUtils;
 
+import java.util.function.Consumer;
+
 public class PlotRepairSession extends PlotBuilderSession {
     int totalDifferences = 0;
 
@@ -76,10 +78,10 @@ public class PlotRepairSession extends PlotBuilderSession {
     }
 
     @Override
-    public void sendStatusMessage() {
+    public void sendStatusMessage(Consumer<? super String> sendFunc) {
         int repairedDifferences = totalDifferences - (int)Math.ceil(actionQueue.size() / 3.0);
-        bot.getChatQueue().sendChat("Currently repairing: " + plotName);
-        bot.getChatQueue().sendChat(String.format(
+        sendFunc.accept("Currently repairing: " + plotName);
+        sendFunc.accept(String.format(
                 "This build requires %d fixes in total, and I've fixed about %d of them so far, so I'm about %.2f%% done.",
                 totalDifferences,
                 repairedDifferences,

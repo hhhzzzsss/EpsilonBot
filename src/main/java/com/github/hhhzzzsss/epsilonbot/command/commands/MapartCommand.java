@@ -102,16 +102,22 @@ public class MapartCommand extends ChatCommand {
             int mapIdx = MapartManager.getMapartIndex().size();
             MapartBuilderSession mbs;
             try {
-                mbs = new MapartBuilderSession(bot, mapIdx, url, width, height, dithering.get(), useTransparency.get());
+                mbs = new MapartBuilderSession(bot, mapIdx, url, width, height, dithering.get(), useTransparency.get(), sender.getMsgSender());
             } catch (IOException e) {
                 throw new CommandException(e.getMessage());
             }
             buildHandler.setBuilderSession(mbs);
-            bot.sendChat("Loading mapart...");
+            bot.sendResponse("Loading mapart...", sender.getMsgSender());
+            if (sender.getMsgSender() != null) {
+                bot.sendChat(sender.getMsgSender() + " has privately requested a mapart");
+            }
         } else {
             MapartCheckerThread mct;
             try {
-                mct = new MapartCheckerThread(bot, url, width, height, dithering.get(), useTransparency.get());
+                mct = new MapartCheckerThread(bot, url, width, height, dithering.get(), useTransparency.get(), sender.getMsgSender());
+                if (sender.getMsgSender() != null) {
+                    bot.sendChat(sender.getMsgSender() + " has privately requested a mapart");
+                }
             } catch (IOException e) {
                 throw new CommandException(e.getMessage());
             }

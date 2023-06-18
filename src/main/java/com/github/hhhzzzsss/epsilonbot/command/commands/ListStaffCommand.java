@@ -34,7 +34,7 @@ public class ListStaffCommand extends ChatCommand {
     @Override
     public void executeChat(ChatSender sender, String args) throws CommandException {
         (new Thread(() -> {
-            bot.sendChat("Current registered staff: " + String.join(", ", ModerationManager.getStaffNames()));
+            bot.sendResponse("Current registered staff: " + String.join(", ", ModerationManager.getStaffNames()), sender.getMsgSender());
         })).start();
     }
 }

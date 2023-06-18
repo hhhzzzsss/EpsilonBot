@@ -12,6 +12,7 @@ import lombok.Getter;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 public abstract class BuilderSession {
@@ -181,7 +182,7 @@ public abstract class BuilderSession {
         }
     }
 
-    public abstract void sendStatusMessage();
+    public abstract void sendStatusMessage(Consumer<? super String> sendFunc);
 
     public void stop() {
         this.stopped = true;

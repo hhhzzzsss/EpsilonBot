@@ -40,7 +40,7 @@ public class RepairCommand extends ChatCommand {
     @Override
     public void executeChat(ChatSender sender, String args) throws CommandException {
         if (sender.getPermission() == 0) {
-            bot.sendChat("Sorry, usage of the `repair command has been restricted due to complaints about EpsilonBot spamming commandspy for staff. If a build has been griefed, please notify a staff member instead and they should be able to roll it back.");
+            bot.sendResponse("Sorry, usage of the `repair command has been restricted due to complaints about EpsilonBot spamming commandspy for staff. If a build has been griefed, please notify a staff member instead and they should be able to roll it back.", sender.getMsgSender());
             return;
         }
 
@@ -53,9 +53,9 @@ public class RepairCommand extends ChatCommand {
                 try {
                     Section section = PlotManager.loadSchem(plot.pos);
                     if (plotBuilder.getBuilderSession() != null) {
-                        bot.sendChat("Another build is in progress. Interrupting that build to repair \"" + plot.getName() + "\"...");
+                        bot.sendResponse("Another build is in progress. Interrupting that build to repair \"" + plot.getName() + "\"...", sender.getMsgSender());
                     } else {
-                        bot.sendChat("Repairing \"" + plot.getName() + "\"...");
+                        bot.sendResponse("Repairing \"" + plot.getName() + "\"...", sender.getMsgSender());
                     }
                     plotBuilder.setBuilderSession(new PlotRepairSession(bot, section, plot.pos, plot.getName()));
                 } catch (IOException e) {

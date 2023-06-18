@@ -15,12 +15,14 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.net.URL;
 
 public class MapartBuilderSession extends BuilderSession {
     @Getter URL url;
     boolean useTransparency;
+    @Getter String requester;
     @Getter int mapIdx;
     int originX;
     int originZ;
@@ -39,6 +41,7 @@ public class MapartBuilderSession extends BuilderSession {
         super(bot);
         this.url = state.url;
         this.useTransparency = state.useTransparency;
+        this.requester = state.requester;
         this.mapIdx = state.mapIdx;
         this.originX = state.originX;
         this.originZ = state.originZ;
@@ -65,10 +68,11 @@ public class MapartBuilderSession extends BuilderSession {
                 false));
     }
 
-    public MapartBuilderSession(EpsilonBot bot, int mapIdx, URL url, int horizDim, int vertDim, boolean dither, boolean useTransparency) throws IOException {
+    public MapartBuilderSession(EpsilonBot bot, int mapIdx, URL url, int horizDim, int vertDim, boolean dither, boolean useTransparency, String requester) throws IOException {
         super(bot);
         this.url = url;
         this.useTransparency = useTransparency;
+        this.requester = requester;
         this.mapIdx = mapIdx;
         this.originX = Math.floorDiv(Config.getConfig().getMapartX()+64, 128)*128-64;
         this.originZ = Math.floorDiv(Config.getConfig().getMapartZ()+64, 128)*128-64 + 256*mapIdx - 1;
@@ -158,7 +162,11 @@ public class MapartBuilderSession extends BuilderSession {
 
                 String warpName = Config.getConfig().getWarpName();
                 if (!warpName.equals("")) {
-                    bot.sendChat(String.format("Finished building mapart. Go to /warp %s_%d to collect", warpName, mapIdx));
+                    if (requester == null) {
+                        bot.sendChat(String.format("Finished building mapart. Go to /warp %s_%d to collect", warpName, mapIdx));
+                    } else {
+                        bot.sendCommand(String.format("/mail send %s Finished building your mapart. Go to /warp %s_%d to collect", requester, warpName, mapIdx));
+                    }
                 }
 
                 stop();
@@ -336,6 +344,7 @@ public class MapartBuilderSession extends BuilderSession {
         MapartBuildState state = new MapartBuildState();
         state.url = this.url;
         state.useTransparency = this.useTransparency;
+        state.requester = requester;
         state.mapIdx = this.mapIdx;
         state.originX = this.originX;
         state.originZ = this.originZ;
@@ -351,19 +360,19 @@ public class MapartBuilderSession extends BuilderSession {
     }
 
     @Override
-    public void sendStatusMessage() {
-        bot.sendChat("Currently building mapart for: " + url.toString());
+    public void sendStatusMessage(Consumer<? super String> sendFunc) {
+        sendFunc.accept("Currently building mapart for: " + (requester==null ? url.toString() : String.format("[Requested by %s]", requester)));
         if (tileIndex < numTiles) {
             int totalBlocks = 128*129*numTiles;
             int totalProgress = 128*129*tileIndex + tileProgress;
-            bot.sendChat(String.format(
+            sendFunc.accept(String.format(
                     "This mapart requires %d block placements in total, and I've placed about %d of them so far, so I'm about %.2f%% done.",
                     totalBlocks,
                     totalProgress,
                     (double) totalProgress / totalBlocks * 100.0
             ));
         } else {
-            bot.sendChat(String.format(
+            sendFunc.accept(String.format(
                     "I've finished building but I need to double check the mapart for errors. I'm currently checking tile %d/%d.",
                     tileIndex-numTiles+1,
                     numTiles

@@ -45,22 +45,22 @@ public class BlacklistCommand extends ChatCommand {
             try {
                 response = ProfileUtils.getPlayerProfile(args);
                 if (ModerationManager.isBlacklisted(response.getUuid())) {
-                    bot.sendChat(response.getUsername() + " is already blacklisted");
+                    bot.sendResponse(response.getUsername() + " is already blacklisted", sender.getMsgSender());
                     return;
                 }
                 ModerationManager.blacklist(response.getUuid());
             } catch (Exception e) {
-                bot.sendChat("Error blacklisting: " + e.getMessage());
+                bot.sendResponse("Error blacklisting: " + e.getMessage(), sender.getMsgSender());
                 return;
             }
 
             try {
                 ModerationManager.saveBlacklist();
             } catch (IOException e) {
-                bot.sendChat("Error saving blacklist: " + e.getMessage());
+                bot.sendResponse("Error saving blacklist: " + e.getMessage(), sender.getMsgSender());
                 return;
             }
-            bot.sendChat("Successfully added " + response.getUsername() + " to the blacklist");
+            bot.sendResponse("Successfully added " + response.getUsername() + " to the blacklist", sender.getMsgSender());
         })).start();
     }
 }

@@ -289,6 +289,18 @@ public class EpsilonBot {
 		}
 		executor.shutdownNow();
 	}
+
+	public void sendMsg(String message, String targetPlayer) {
+		chatQueue.sendMsg(message, targetPlayer);
+	}
+
+	public void sendResponse(String message, String targetPlayer) {
+		if (targetPlayer == null) {
+			sendChat(message);
+		} else {
+			sendMsg(message, targetPlayer);
+		}
+	}
 	
 	public void relog() {
 		try {

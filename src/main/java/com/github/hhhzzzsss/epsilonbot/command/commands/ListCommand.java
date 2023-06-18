@@ -42,7 +42,7 @@ public class ListCommand extends ChatCommand {
                 ", ",
                 bot.getPlayerListTracker().getPlayerList().values().stream().map(playerData -> playerData.getName()).sorted().collect(Collectors.toList())
         );
-        bot.sendChat(String.format("There are %d/60 online players", numPlayers));
-        bot.sendChat(playersString);
+        bot.sendResponse(String.format("There are %d/60 online players", numPlayers), sender.getMsgSender());
+        bot.sendResponse(playersString, sender.getMsgSender());
     }
 }

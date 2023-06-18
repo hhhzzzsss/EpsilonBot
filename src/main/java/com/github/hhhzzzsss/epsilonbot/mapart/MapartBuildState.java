@@ -20,6 +20,7 @@ public class MapartBuildState {
 
     public URL url;
     public boolean useTransparency = false;
+    public String requester;
     public int mapIdx;
     public int originX;
     public int originZ;
