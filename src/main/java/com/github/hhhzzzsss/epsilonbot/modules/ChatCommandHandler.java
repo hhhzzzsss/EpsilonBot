@@ -70,9 +70,9 @@ public class ChatCommandHandler implements PacketListener {
 			}
 			catch (CommandException e) {
 				if (msgSender == null) {
-					bot.sendChat("Error: " + e.getMessage());
+					bot.sendChat("Error - " + e.getMessage());
 				} else {
-					bot.sendMsg("Error: " + e.getMessage(), msgSender);
+					bot.sendMsg("Error - " + e.getMessage(), msgSender);
 				}
 			}
 		}
