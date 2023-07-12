@@ -27,6 +27,7 @@ public class Config {
     int buildSyncZ;
     int mapartX;
     int mapartZ;
+    int maxTiles = 9;
     String commandPrefix = "`";
     ArrayList<String> alternatePrefixes;
     String warpName = "epsilon_mapart";

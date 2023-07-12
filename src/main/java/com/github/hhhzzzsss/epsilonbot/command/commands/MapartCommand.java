@@ -1,5 +1,6 @@
 package com.github.hhhzzzsss.epsilonbot.command.commands;
 
+import com.github.hhhzzzsss.epsilonbot.Config;
 import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
 import com.github.hhhzzzsss.epsilonbot.command.ArgsParser;
 import com.github.hhhzzzsss.epsilonbot.command.ChatCommand;
@@ -83,8 +84,8 @@ public class MapartCommand extends ChatCommand {
         }
 
         if (sender.getPermission() == 0) {
-            if (width > 3 || height > 3) {
-                throw new CommandException("Width and height cannot exceed 3");
+            if (width*height > Config.getConfig().getMaxTiles()) {
+                throw new CommandException("Too large! Width x height cannot exceed " + Config.getConfig().getMaxTiles() + " tiles");
             }
         }
 

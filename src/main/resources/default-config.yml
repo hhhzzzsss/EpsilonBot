@@ -7,6 +7,7 @@ buildSyncX: 2021952
 buildSyncZ: 17080800
 mapartX: -10921088
 mapartZ: 648320
+maxTiles: 9
 commandPrefix: '`'
 alternatePrefixes: []
 warpName: epsilon_mapart
