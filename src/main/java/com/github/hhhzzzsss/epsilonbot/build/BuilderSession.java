@@ -16,8 +16,9 @@ import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 public abstract class BuilderSession {
-    public static final Pattern WE_PROGRESS_PATTERN = Pattern.compile("\\s*You have \\S+ blocks queued. Placing speed: \\S+, \\S+ left.\\s*");
-    public static final Pattern WE_DONE_PATTERN = Pattern.compile("\\s*Job \\[\\S+\\] \\S+ - done\\s*");
+//    public static final Pattern WE_PROGRESS_PATTERN = Pattern.compile("\\s*You have \\S+ blocks queued. Placing speed: \\S+, \\S+ left.\\s*");
+    public static final Pattern WE_CONFIRM_PATTERN = Pattern.compile("");
+    public static final Pattern WE_DONE_PATTERN = Pattern.compile("\\s*(Job \\[\\S+\\] \\S+ - done|\\(FAWE\\) Operation completed \\(\\d+\\)\\.)\\s*");
 
     public final EpsilonBot bot;
     @Getter private boolean stopped = false;
@@ -53,10 +54,14 @@ public abstract class BuilderSession {
     }
 
     public void onChat(String message) {
-        if (WE_PROGRESS_PATTERN.matcher(message).matches()) {
-            WECooldown = 10;
-        } else if (WE_DONE_PATTERN.matcher(message).matches()) {
+        if (WE_DONE_PATTERN.matcher(message).matches()) {
             WEFinished = true;
+        }
+    }
+
+    public void onBossbar(String message) {
+        if (message.startsWith("ETA: ")) {
+            WECooldown = 10;
         }
     }
 
@@ -151,11 +156,11 @@ public abstract class BuilderSession {
             actionQueue.poll();
         } else if (WECooldown <= 0) {
             bot.sendCommand(action.command);
+            WECooldown = 1; // Set to 1 because CommandHandler will already guarantee a minimum 1000 delay
             if (!action.awaitWE) {
-                WECooldown = 1; // Set to 1 because CommandHandler will already guarantee a minimum 1000 delay
                 actionQueue.poll();
             } else {
-                WECooldown = 10;
+                WECooldown = 20;
             }
         }
     }

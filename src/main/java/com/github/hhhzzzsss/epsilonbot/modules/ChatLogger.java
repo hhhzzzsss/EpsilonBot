@@ -29,7 +29,7 @@ public class ChatLogger implements PacketListener, DisconnectListener {
 		else if (packet instanceof ClientboundChatPacket) {
 			ClientboundChatPacket t_packet = (ClientboundChatPacket) packet;
 			String fullText = ChatUtils.getFullText(t_packet.getMessage());
-			if (fullText.equals("") || fullText.startsWith("Command set: ") || fullText.matches("[\u2800-\u28FF\\s]+") || fullText.matches("[⬛\\s]{60,}")) {
+			if (fullText.equals("") || fullText.startsWith("Command set: ")) {
 				return;
 			}
 			log(fullText);

@@ -8,9 +8,12 @@ import com.github.steveice10.mc.protocol.data.game.entity.EntityEvent;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
+import com.github.steveice10.mc.protocol.data.game.entity.player.HandPreference;
 import com.github.steveice10.mc.protocol.data.game.inventory.ClickItemAction;
 import com.github.steveice10.mc.protocol.data.game.inventory.ContainerActionType;
 import com.github.steveice10.mc.protocol.data.game.level.notify.GameEvent;
+import com.github.steveice10.mc.protocol.data.game.setting.ChatVisibility;
+import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundCommandsPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundRespawnPacket;
@@ -19,6 +22,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundOpenScreenPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundGameEventPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientCommandPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientInformationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundContainerClickPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundSetCarriedItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundUseItemPacket;
@@ -28,6 +32,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.TreeMap;
 
 @RequiredArgsConstructor
@@ -68,6 +74,18 @@ public class StateManager implements PacketListener, TickListener, DisconnectLis
 			gamemode = t_packet.getGameMode();
 			worldName = t_packet.getWorldName();
 			System.out.println(worldName);
+
+			// Send client information
+			List<SkinPart> skinParts = new ArrayList<>();
+			skinParts.add(SkinPart.CAPE);
+			skinParts.add(SkinPart.JACKET);
+			skinParts.add(SkinPart.LEFT_SLEEVE);
+			skinParts.add(SkinPart.RIGHT_SLEEVE);
+			skinParts.add(SkinPart.LEFT_PANTS_LEG);
+			skinParts.add(SkinPart.RIGHT_PANTS_LEG);
+			skinParts.add(SkinPart.HAT);
+			bot.sendPacket(new ServerboundClientInformationPacket(
+					"en-us", 16, ChatVisibility.FULL, true, skinParts, HandPreference.RIGHT_HAND, false, true));
 		}
 		else if (packet instanceof ClientboundEntityEventPacket) {
 			ClientboundEntityEventPacket t_packet = (ClientboundEntityEventPacket) packet;

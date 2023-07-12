@@ -58,7 +58,7 @@ public class ChatUtils {
 	public static String getText(TranslatableComponent message) {
 		String translate = LANGUAGE_MAP.get(message.key());
 		if (translate == null) {
-			return "";
+			translate = message.key();
 		}
 		Matcher matcher = ARG_PATTERN.matcher(translate);
 		StringBuffer sb = new StringBuffer();

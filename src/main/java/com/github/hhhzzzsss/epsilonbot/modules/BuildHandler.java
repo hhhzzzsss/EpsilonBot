@@ -15,6 +15,7 @@ import com.github.hhhzzzsss.epsilonbot.mapart.MapartBuilderSession;
 import com.github.hhhzzzsss.epsilonbot.mapart.MapartCheckerThread;
 import com.github.hhhzzzsss.epsilonbot.mapart.MapartQueueState;
 import com.github.hhhzzzsss.epsilonbot.util.ChatUtils;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundBossEventPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSetTimePacket;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
@@ -108,6 +109,14 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
                 builderSession.onChat(strMessage);
                 if (builderSession.isStopped()) {
                     builderSession = null;
+                }
+            }
+        } else if (packet instanceof ClientboundBossEventPacket) {
+            ClientboundBossEventPacket t_packet = (ClientboundBossEventPacket) packet;
+            if (builderSession != null) {
+                Component titleComponent = t_packet.getTitle();
+                if (titleComponent != null) {
+                    builderSession.onBossbar(ChatUtils.getFullText(titleComponent));
                 }
             }
         }
