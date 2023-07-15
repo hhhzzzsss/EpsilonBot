@@ -11,7 +11,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.UUID;
 
 @Data
 public class Config {
@@ -31,6 +30,8 @@ public class Config {
     String commandPrefix = "`";
     ArrayList<String> alternatePrefixes;
     String warpName = "epsilon_mapart";
+    String staffKey = "";
+    String trustedKey = "";
     ArrayList<String> trusted;
 
     static {

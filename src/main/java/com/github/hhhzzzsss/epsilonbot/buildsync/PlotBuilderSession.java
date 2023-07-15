@@ -31,7 +31,7 @@ public class PlotBuilderSession extends BuilderSession {
     boolean firstLoad = false;
     int currentLayer = 0;
 
-    @Getter private boolean finished = false;
+	@Getter private boolean finished = false;
 
     public PlotBuilderSession(EpsilonBot bot, Section section, PlotCoord plotCoord, String plotName) {
         super(bot);
@@ -217,11 +217,13 @@ public class PlotBuilderSession extends BuilderSession {
     }
 
     public static final int GROUP_DIM = (PlotUtils.PLOT_DIM-1) / 8 + 1;
+
     @RequiredArgsConstructor
     class BlockGroup {
         public final int x;
         public final int z;
         public ArrayList<BlockChangeEntry> blockChangeEntries = new ArrayList<>();
+
         // If PLOT_DIM is not divisible by 8, the move pos may go beyond plot boundaries.
         // This will cause the in-bounds checker to make the bot try to teleport back,
         // so I made this quick function to prevent that
@@ -232,6 +234,7 @@ public class PlotBuilderSession extends BuilderSession {
                 return originX + 8*x + 4;
             }
         }
+
         int getMoveZ() {
             if (8*z + 4 >= PlotUtils.PLOT_DIM) {
                 return originZ + 8*z;
@@ -240,6 +243,7 @@ public class PlotBuilderSession extends BuilderSession {
             }
         }
     }
+
     @RequiredArgsConstructor
     class BlockChangeEntry {
         public final int x;
@@ -248,6 +252,7 @@ public class PlotBuilderSession extends BuilderSession {
         public final String name;
         public final boolean shouldBreak;
     }
+
     void loadLayer() {
         World world = bot.getWorld();
         HashMap<Integer, BlockGroup> groupMap = new HashMap<>();

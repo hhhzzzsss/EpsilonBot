@@ -15,14 +15,17 @@ public class TestCommand extends ChatCommand {
     public String getName() {
         return "test";
     }
+
     @Override
     public String[] getSyntax() {
         return new String[0];
     }
+
     @Override
     public String getDescription() {
         return "A test command";
     }
+
     @Override
     public int getDefaultPermission() {
         return 0;

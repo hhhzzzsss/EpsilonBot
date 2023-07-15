@@ -11,23 +11,23 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import java.net.URL;
 
 public class MapartBuilderSession extends BuilderSession {
-    @Getter URL url;
+	@Getter URL url;
     boolean useTransparency;
-    @Getter String requester;
-    @Getter int mapIdx;
+	@Getter String requester;
+	@Getter int mapIdx;
     int originX;
     int originZ;
     int numTiles;
-    @Getter MapartLoaderThread loaderThread;
+	@Getter MapartLoaderThread loaderThread;
     boolean mapartLoaded = false;
     BlockElevation[][] blocks;
     int maxElevation;
@@ -116,6 +116,7 @@ public class MapartBuilderSession extends BuilderSession {
 
         // Teleport back if left plot
         if (!isInCorrectTile()) {
+			System.out.println("Not in the correct tile. Teleporting...");
             tryTeleport(originX + 128*(tileIndex%numTiles) + 64, 256, originZ + 65, 5);
             return;
         }
@@ -160,6 +161,9 @@ public class MapartBuilderSession extends BuilderSession {
                     e.printStackTrace();
                 }
 
+				bot.getWorld().sequence = 0;
+				bot.getWorld().sequenceMap.clear();
+
                 String warpName = Config.getConfig().getWarpName();
                 if (!warpName.equals("")) {
                     if (requester == null) {
@@ -174,7 +178,6 @@ public class MapartBuilderSession extends BuilderSession {
             }
         }
     }
-
 
 
     @Override
@@ -230,6 +233,7 @@ public class MapartBuilderSession extends BuilderSession {
         public final int z;
         public final String name;
     }
+
     private void loadTileBuild(int idx) {
         boolean topEmpty = true;
         for (int y=100; y<=100+maxElevation; y++) {

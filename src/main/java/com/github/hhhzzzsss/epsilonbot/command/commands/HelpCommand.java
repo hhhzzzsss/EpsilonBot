@@ -17,14 +17,17 @@ public class HelpCommand extends ChatCommand {
     public String getName() {
         return "help";
     }
+
     @Override
     public String[] getSyntax() {
         return new String[] {"[<command>]"};
     }
+
     @Override
     public String getDescription() {
         return "Lists or explains commands";
     }
+
     @Override
     public int getDefaultPermission() {
         return 0;
@@ -54,11 +57,9 @@ public class HelpCommand extends ChatCommand {
             sb.append(String.format("%s%s ", prefix, command.getName()));
             if (command.getSyntax().length == 0) {
                 sb.append(String.format("- %s", command.getDescription()));
-            }
-            else if (command.getSyntax().length == 1) {
+			} else if (command.getSyntax().length == 1) {
                 sb.append(String.format("%s - %s", command.getSyntax()[0], command.getDescription()));
-            }
-            else {
+			} else {
                 sb.append(String.format("- %s", command.getDescription()));
                 for (String syntax : command.getSyntax()) {
                     sb.append(String.format("\n%s%s %s", prefix, command.getName(), syntax));

@@ -22,16 +22,19 @@ public class RepairCommand extends ChatCommand {
     public String getName() {
         return "repair";
     }
+
     @Override
     public String[] getSyntax() {
         return new String[] {
                 "<plot name>",
         };
     }
+
     @Override
     public String getDescription() {
         return "Attempts to repair a specified plot";
     }
+
     @Override
     public int getDefaultPermission() {
         return 0;

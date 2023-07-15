@@ -25,20 +25,24 @@ public class MapartCommand extends ChatCommand {
     public String getName() {
         return "mapart";
     }
+
     @Override
     public String[] getSyntax() {
         return new String[] {
                 "<url> [<width>] [<height>] [<flags>]",
         };
     }
+
     @Override
     public String getDescription() {
         return "Builds mapart for a given image";
     }
+
     @Override
     public int getDefaultPermission() {
         return 0;
     }
+
     @Override
     public String[] getFlags() {
         return new String[]{
@@ -96,7 +100,6 @@ public class MapartCommand extends ChatCommand {
         } catch (IOException e) {
             throw new CommandException(e.getMessage());
         }
-
 
 
         if (buildHandler.getBuilderSession() == null) {

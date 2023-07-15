@@ -1,7 +1,7 @@
 package com.github.hhhzzzsss.epsilonbot.command;
 
 import com.github.hhhzzzsss.epsilonbot.util.ProfileUtils;
-import com.google.gson.*;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.Getter;
 
@@ -21,8 +21,8 @@ public class ModerationManager {
     public static final Path STAFF_JSON_PATH = Path.of("staff.json");
     public static final Path BLACKLIST_JSON_PATH = Path.of("blacklist.json");
     public static Gson gson = new Gson();
-    @Getter private static HashSet<UUID> staffList = new HashSet<>();
-    @Getter private static HashSet<UUID> blacklist = new HashSet<>();
+	@Getter private static HashSet<UUID> staffList = new HashSet<>();
+	@Getter private static HashSet<UUID> blacklist = new HashSet<>();
 
     static {
         try {
@@ -40,7 +40,8 @@ public class ModerationManager {
     public static void loadStaffList() throws IOException {
         if (Files.exists(STAFF_JSON_PATH)) {
             Reader indexReader = Files.newBufferedReader(STAFF_JSON_PATH);
-            Type typeToken = new TypeToken<HashSet<UUID>>() {}.getType();
+			Type typeToken = new TypeToken<HashSet<UUID>>() {
+			}.getType();
             staffList = gson.fromJson(indexReader, typeToken);
             indexReader.close();
         }
@@ -72,11 +73,11 @@ public class ModerationManager {
     }
 
 
-
     public static void loadBlacklist() throws IOException {
         if (Files.exists(BLACKLIST_JSON_PATH)) {
             Reader indexReader = Files.newBufferedReader(BLACKLIST_JSON_PATH);
-            Type typeToken = new TypeToken<HashSet<UUID>>() {}.getType();
+			Type typeToken = new TypeToken<HashSet<UUID>>() {
+			}.getType();
             blacklist = gson.fromJson(indexReader, typeToken);
             indexReader.close();
         }

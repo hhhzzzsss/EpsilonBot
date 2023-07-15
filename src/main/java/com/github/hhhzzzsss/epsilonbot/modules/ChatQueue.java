@@ -4,12 +4,15 @@ import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
 import com.github.hhhzzzsss.epsilonbot.listeners.PacketListener;
 import com.github.hhhzzzsss.epsilonbot.listeners.TickListener;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSetTimePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPacket;
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.Queue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.regex.Matcher;
@@ -32,7 +35,14 @@ public class ChatQueue implements TickListener, PacketListener {
 	public void onTick() {
 		long currentTime = System.currentTimeMillis();
 		if (!chatQueue.isEmpty() && currentTime >= nextChatTime && timeFlag) {
-			bot.sendPacket(new ServerboundChatPacket(chatQueue.poll()));
+			// TODO: Support chat signatures
+			final String message = chatQueue.poll();
+
+			if (message.startsWith("/")) {
+				bot.sendPacket(new ServerboundChatCommandPacket(message.substring(1), System.currentTimeMillis(), 0, new ArrayList<>(), 0, new BitSet()));
+			} else {
+				bot.sendPacket(new ServerboundChatPacket(message, System.currentTimeMillis(), 0, null, 0, new BitSet()));
+			}
 			nextChatTime = currentTime + chatDelay;
 			timeFlag = false;
 		}
@@ -45,6 +55,7 @@ public class ChatQueue implements TickListener, PacketListener {
 	}
 	
 	public static final Pattern chatSplitter = Pattern.compile("\\G\\s*([^\\r\\n]{1,256}(?=\\s|$)|[^\\r\\n]{256})");
+
 	public void sendChat(String chat) {
 		if (chatQueue.size() < maxChatQueue) {
 			chat = chat.trim().replace("§", "&");

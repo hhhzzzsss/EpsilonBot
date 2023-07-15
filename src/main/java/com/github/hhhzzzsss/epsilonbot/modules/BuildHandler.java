@@ -16,7 +16,7 @@ import com.github.hhhzzzsss.epsilonbot.mapart.MapartCheckerThread;
 import com.github.hhhzzzsss.epsilonbot.mapart.MapartQueueState;
 import com.github.hhhzzzsss.epsilonbot.util.ChatUtils;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundBossEventPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundChatPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSystemChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSetTimePacket;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -36,7 +36,7 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
     public static final int ACTIONS_PER_TIME_PACKET = 20;
 
     public final EpsilonBot bot;
-    @Getter @Setter BuilderSession builderSession = null;
+	@Getter @Setter BuilderSession builderSession = null;
 
     private int actionQuota = 0;
 
@@ -45,7 +45,7 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
 
     public static final int MAX_MAPART_QUEUE = 5;
     private Queue<MapartCheckerThread> unloadedMapartQueue = new LinkedBlockingQueue<>();
-    @Getter private Queue<MapartCheckerThread> mapartQueue = new LinkedBlockingQueue<>();
+	@Getter private Queue<MapartCheckerThread> mapartQueue = new LinkedBlockingQueue<>();
 
     @Override
     public void onTick() {
@@ -101,9 +101,8 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
                     builderSession = null;
                 }
             }
-        } else if (packet instanceof ClientboundChatPacket) {
-            ClientboundChatPacket t_packet = (ClientboundChatPacket) packet;
-            Component message = t_packet.getMessage();
+		} else if (packet instanceof ClientboundSystemChatPacket t_packet) {
+			Component message = t_packet.getContent();
             String strMessage = ChatUtils.getFullText(message);
             if (builderSession != null) {
                 builderSession.onChat(strMessage);
@@ -171,9 +170,11 @@ public class BuildHandler implements TickListener, PacketListener, DisconnectLis
                 for (MapartQueueState queueState : queueStates) {
                     try {
                         mapartQueue.add(new MapartCheckerThread(bot, queueState.url, queueState.horizDim, queueState.vertDim, queueState.dither, queueState.useTransparency, queueState.requester));
-                    } catch (IOException e) {}
+					} catch (IOException e) {
+					}
+				}
+			} catch (IOException e) {
                 }
-            } catch (IOException e) {}
         }
 
         if (MapartBuildState.buildStateExists()) {

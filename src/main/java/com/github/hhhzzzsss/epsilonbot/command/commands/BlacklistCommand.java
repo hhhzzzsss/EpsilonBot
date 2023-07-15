@@ -19,16 +19,19 @@ public class BlacklistCommand extends ChatCommand {
     public String getName() {
         return "blacklist";
     }
+
     @Override
     public String[] getSyntax() {
         return new String[]{
                 "[<username>]"
         };
     }
+
     @Override
     public String getDescription() {
         return "Adds someone to EpsilonBot's blacklist";
     }
+
     @Override
     public int getDefaultPermission() {
         return 1;

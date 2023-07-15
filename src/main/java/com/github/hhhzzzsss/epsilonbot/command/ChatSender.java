@@ -7,8 +7,7 @@ import lombok.Getter;
 import java.util.UUID;
 
 @AllArgsConstructor
-@Getter
-public class ChatSender {
+@Getter public class ChatSender {
     private final EpsilonBot bot;
     private final UUID uuid;
     private final String msgSender;

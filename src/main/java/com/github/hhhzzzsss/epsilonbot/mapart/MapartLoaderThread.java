@@ -278,7 +278,8 @@ public class MapartLoaderThread extends Thread {
 	private static BlockElevation getNearestMapColor(double r, double g, double b) {
 		BlockElevation nearest = null;
 		double minDistSq = Integer.MAX_VALUE;
-		for (MapUtils.MapColor mc : MapUtils.getColors()) for (int tone = 0; tone<3; tone++) {
+		for (MapUtils.MapColor mc : MapUtils.getColors())
+			for (int tone = 0; tone < 3; tone++) {
 			Color c = mc.getColors()[tone];
 			double dr = r - c.getRed();
 			double dg = g - c.getGreen();

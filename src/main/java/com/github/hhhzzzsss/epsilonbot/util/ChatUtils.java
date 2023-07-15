@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 public class ChatUtils {
 	public static final Pattern ARG_PATTERN = Pattern.compile("%(?:(\\d+)\\$)?(s|%)");
 	public static final HashMap<String, String> LANGUAGE_MAP = new HashMap<>(); 
+
 	static {
 		InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("language.json");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -31,11 +32,9 @@ public class ChatUtils {
 		StringBuilder sb = new StringBuilder();
 		if (message instanceof TextComponent) {
 			sb.append(getText((TextComponent) message));
-		}
-		else if (message instanceof TranslatableComponent) {
+		} else if (message instanceof TranslatableComponent) {
 			sb.append(getText((TranslatableComponent) message));
-		}
-		else {
+		} else {
 			return message.toString();
 		}
 		
@@ -49,8 +48,7 @@ public class ChatUtils {
 		String text = message.content();
 		if (text == null) {
 			return "";
-		}
-		else {
+		} else {
 			return text;
 		}
 	}
@@ -67,14 +65,12 @@ public class ChatUtils {
 		while (matcher.find()) {
 			if (matcher.group().equals("%%")) {
 				matcher.appendReplacement(sb, "%");
-			}
-			else {
+			} else {
 				String idxStr = matcher.group(1);
 				int idx = idxStr == null ? i++ : Integer.parseInt(idxStr);
 				if (idx < message.args().size()) {
 					matcher.appendReplacement(sb, Matcher.quoteReplacement( getFullText(message.args().get(idx)) ));
-				}
-				else {
+				} else {
 					matcher.appendReplacement(sb, "");
 				}
 			}

@@ -14,6 +14,7 @@ public class Plot {
     public int getX() {
         return pos.x;
     }
+
     public int getZ() {
         return pos.z;
     }
