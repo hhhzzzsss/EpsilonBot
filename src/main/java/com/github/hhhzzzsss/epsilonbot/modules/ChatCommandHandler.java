@@ -56,8 +56,12 @@ public class ChatCommandHandler implements PacketListener {
 				command = m.group(3);
 				args = m.group(4);
 			} else if ((m = chatCommandPattern.matcher(strMessage)).matches()) {
-				command = m.group(1);
-				args = m.group(2).trim();
+				String username = m.group(1);
+				command = m.group(2);
+				args = m.group(3).trim();
+				if (username.equalsIgnoreCase(bot.getUsername())) {
+					return;
+				}
 			} else if ((m = discordCommandPattern.matcher(strMessage)).matches()) {
 				command = m.group(1);
 				args = m.group(2).trim();
@@ -115,7 +119,7 @@ public class ChatCommandHandler implements PacketListener {
 		String prefixMatchingString = String.join("|", allPrefixes);
 
 		msgCommandPattern = Pattern.compile(String.format("\\| (\\S+) \\((.+?)\\) > You: (?:%s)(\\S+)(.*)?", prefixMatchingString));
-		chatCommandPattern = Pattern.compile(String.format(".*(?: »|:) +(?:%s)(\\S+)(.*)?", prefixMatchingString));
+		chatCommandPattern = Pattern.compile(String.format(".*\\b(\\S+)\\s*(?: »|:) +(?:`)(\\S+)(.*)?", prefixMatchingString));
 		discordCommandPattern = Pattern.compile(String.format("\\[Discord\\] .*: (?:%s)(\\S+)(.*)?", prefixMatchingString));
 	}
 }
