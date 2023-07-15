@@ -11,14 +11,15 @@ import java.io.IOException;
 import java.net.URL;
 
 public class MapartCheckerThread extends Thread {
-    @Getter EpsilonBot bot;
-    @Getter URL url;
-    @Getter int horizDim;
-    @Getter int vertDim;
-    @Getter boolean dither;
-    @Getter boolean useTransparency;
-    @Getter String requester;
-    @Getter Throwable exception;
+	@Getter EpsilonBot bot;
+	@Getter URL url;
+	@Getter int horizDim;
+	@Getter int vertDim;
+	@Getter boolean dither;
+	@Getter boolean useTransparency;
+	@Getter String requester;
+	@Getter Throwable exception;
+
     public MapartCheckerThread(EpsilonBot bot, URL url, int horizDim, int vertDim, boolean dither, boolean useTransparency, String requester) throws IOException {
         this.bot = bot;
         this.url = url;

@@ -45,8 +45,7 @@ public class PlotCoord {
         return "(" + x + "," + z + ")";
     }
 
-    public static class PlotCoordDeserializer implements JsonDeserializer<PlotCoord>
-    {
+	public static class PlotCoordDeserializer implements JsonDeserializer<PlotCoord> {
         @Override
         public PlotCoord deserialize(JsonElement jsonElement, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             if (jsonElement.isJsonObject()) {

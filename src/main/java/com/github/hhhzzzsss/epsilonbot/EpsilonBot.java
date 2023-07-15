@@ -8,12 +8,10 @@ import com.github.hhhzzzsss.epsilonbot.listeners.PacketListener;
 import com.github.hhhzzzsss.epsilonbot.listeners.TickListener;
 import com.github.hhhzzzsss.epsilonbot.modules.*;
 import com.github.hhhzzzsss.epsilonbot.util.Auth;
+import com.github.hhhzzzsss.epsilonbot.util.ChatUtils;
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
-import com.github.steveice10.mc.protocol.data.game.setting.ChatVisibility;
-import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientInformationPacket;
 import com.github.steveice10.mc.protocol.packet.login.clientbound.ClientboundGameProfilePacket;
 import com.github.steveice10.packetlib.ProxyInfo;
 import com.github.steveice10.packetlib.Session;
@@ -43,7 +41,7 @@ public class EpsilonBot {
 	@Getter private boolean running = true;
 	@Getter private boolean loggedIn = false;
 	@Getter @Setter private boolean autoRelog = true;
-	
+
 	@Getter private ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 	private ArrayList<PacketListener> packetListeners = new ArrayList<>();
 	private ArrayList<TickListener> tickListeners = new ArrayList<>();
@@ -135,8 +133,7 @@ public class EpsilonBot {
 		executor.scheduleAtFixedRate(() -> {
 			try {
 				processTick();
-			}
-			catch (Throwable e) {
+			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		}, 0, 50, TimeUnit.MILLISECONDS);
@@ -153,8 +150,7 @@ public class EpsilonBot {
 			for (TickListener listener : tickListeners) {
 				try {
 					listener.onTick();
-				}
-				catch (Throwable e) {
+				} catch (Throwable e) {
 					e.printStackTrace();
 				}
 			}
@@ -169,18 +165,19 @@ public class EpsilonBot {
 	private class ExpirablePacketFuture implements PacketFuture {
 		private PacketFuture future;
 		private long expiration;
+
 		@Override
 		public boolean onPacket(Packet packet) {
 			if (System.currentTimeMillis() < expiration) {
 				return future.onPacket(packet);
-			}
-			else {
+			} else {
 				return false;
 			}
 		}
 	}
 	
 	public List<PacketFuture> packetFutures = new LinkedList<>();
+
 	private void processPacket(Packet packet) {
 		if (packet instanceof ClientboundGameProfilePacket) {
 			ClientboundGameProfilePacket t_packet = (ClientboundGameProfilePacket) packet;
@@ -192,8 +189,7 @@ public class EpsilonBot {
 		for (PacketListener listener : packetListeners) {
 			try {
 				listener.onPacket(packet);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -214,25 +210,24 @@ public class EpsilonBot {
 		for (DisconnectListener listener : disconnectListeners) {
 			try {
 				listener.onDisconnected(event);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		
 		if (autoRelog) {
-			if (event.getReason().contains("Wait 5 seconds before connecting, thanks! :)") || event.getReason().contains("Connection throttled! Please wait before reconnecting.")) {
+			String reason = ChatUtils.getFullText(event.getReason());
+
+			if (reason.contains("Wait 5 seconds before connecting, thanks! :)") || reason.contains("Connection throttled! Please wait before reconnecting.")) {
 				executor.schedule(() -> {
 					connect();
 				}, 5, TimeUnit.SECONDS);
-			}
-			else {
+			} else {
 				executor.schedule(() -> {
 					connect();
 				}, 1, TimeUnit.SECONDS);
 			}
-		}
-		else {
+		} else {
 			stop();
 		}
 	}
@@ -278,7 +273,8 @@ public class EpsilonBot {
 	}
 	
 	public void sendChatInstantly(String chat) {
-		sendPacket(new ServerboundChatPacket(chat));
+		// TODO: Support chat signatures
+		sendPacket(new ServerboundChatPacket(chat, System.currentTimeMillis(), 0, null, 0, new BitSet()));
 	}
 	
 	public void stop() {
@@ -286,8 +282,7 @@ public class EpsilonBot {
 		autoRelog = false;
 		try {
 			session.disconnect("bye");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		executor.shutdownNow();
@@ -308,8 +303,7 @@ public class EpsilonBot {
 	public void relog() {
 		try {
 			session.disconnect("bye");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

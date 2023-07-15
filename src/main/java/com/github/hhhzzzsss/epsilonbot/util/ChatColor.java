@@ -20,9 +20,9 @@ public enum ChatColor {
     DARK_GRAY('8', 5592405, "555555"),
     BLACK('0', 0, "000000");
 
-    @Getter private final char code;
-    @Getter private final int decimal;
-    @Getter private final String hexadecimal;
+	@Getter private final char code;
+	@Getter private final int decimal;
+	@Getter private final String hexadecimal;
 
     ChatColor(char code, int decimal, String hexadecimal) {
         this.code = code;

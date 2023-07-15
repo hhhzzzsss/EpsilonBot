@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,16 +46,14 @@ public class ArgsParser {
 		if (arg == null) {
 			if (required) {
 				throw getError("integer");
-			}
-			else {
+			} else {
 				return null;
 			}
 		}
 		
 		try {
 			return Integer.parseInt(arg);
-		}
-		catch (NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			throw getError("integer");
 		}
 	}
@@ -68,16 +64,14 @@ public class ArgsParser {
 		if (arg == null) {
 			if (required) {
 				throw getError("double");
-			}
-			else {
+			} else {
 				return null;
 			}
 		}
 		
 		try {
 			return Double.parseDouble(arg);
-		}
-		catch (NumberFormatException e) {
+		} catch (NumberFormatException e) {
 			throw getError("double");
 		}
 	}
@@ -91,8 +85,7 @@ public class ArgsParser {
 		
 		try {
 			return Enum.valueOf(enumType, arg.toUpperCase());
-		}
-		catch (IllegalArgumentException|NullPointerException e) {
+		} catch (IllegalArgumentException | NullPointerException e) {
 			throw getError(enumType.getSimpleName());
 		}
 	}
@@ -131,8 +124,7 @@ public class ArgsParser {
 		if (matcher.find()) {
 			position = matcher.end();
 			return matcher.group(1);
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
@@ -140,8 +132,7 @@ public class ArgsParser {
 	public CommandException getError(String expectedType) {
 		if (position == 0) {
 			return new CommandException(String.format("Expected %s at: %s<--[HERE]", expectedType, command.getName()));
-		}
-		else {
+		} else {
 			return new CommandException(String.format("Expected %s at: %s %s<--[HERE]", expectedType, command.getName(), args.substring(0, position)));
 		}
 	}
@@ -149,8 +140,7 @@ public class ArgsParser {
 	public CommandException getGenericError() {
 		if (position == 0) {
 			return new CommandException(String.format("Invalid or missing argument at: %s<--[HERE]", command.getName()));
-		}
-		else {
+		} else {
 			return new CommandException(String.format("Invalid or missing argument at: %s %s<--[HERE]", command.getName(), args.substring(0, position)));
 		}
 	}
@@ -158,8 +148,7 @@ public class ArgsParser {
 	public CommandException getCustomError(String message) {
 		if (position == 0) {
 			return new CommandException(String.format("%s: %s<--[HERE]", message, command.getName()));
-		}
-		else {
+		} else {
 			return new CommandException(String.format("%s: %s %s<--[HERE]", message, command.getName(), args.substring(0, position)));
 		}
 	}

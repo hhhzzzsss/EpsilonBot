@@ -18,14 +18,17 @@ public class ReloadIndexCommand extends ChatCommand {
     public String getName() {
         return "reloadindex";
     }
+
     @Override
     public String[] getSyntax() {
         return new String[0];
     }
+
     @Override
     public String getDescription() {
         return "Reloads the plot index";
     }
+
     @Override
     public int getDefaultPermission() {
         return 0;

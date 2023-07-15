@@ -19,16 +19,19 @@ public class AddStaffCommand extends ChatCommand {
     public String getName() {
         return "addstaff";
     }
+
     @Override
     public String[] getSyntax() {
         return new String[]{
                 "[<username>]"
         };
     }
+
     @Override
     public String getDescription() {
         return "Adds someone to EpsilonBot's staff list";
     }
+
     @Override
     public int getDefaultPermission() {
         return 1;

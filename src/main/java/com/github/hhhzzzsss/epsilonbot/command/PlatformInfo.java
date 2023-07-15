@@ -1,13 +1,15 @@
 package com.github.hhhzzzsss.epsilonbot.command;
 
 import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 public class PlatformInfo {
 	public enum Platform {
 		MINECRAFT,
 		CONSOLE, // Not supported yet
 	}
+
 	@Getter private final Platform platform;
 	@Getter private EpsilonBot bot;
 	@Getter private Command command;
@@ -26,8 +28,7 @@ public class PlatformInfo {
 	public void sendMessage(String message) {
 		if (platform == Platform.MINECRAFT) {
 			sendMinecraftMessage(message);
-		}
-		else if (platform == Platform.CONSOLE) {
+		} else if (platform == Platform.CONSOLE) {
 			// todo
 		}
 	}
@@ -35,8 +36,7 @@ public class PlatformInfo {
 	public void sendResponseOnlyMessage(String message) {
 		if (platform == Platform.MINECRAFT) {
 			sendMinecraftMessage(message);
-		}
-		else if (platform == Platform.CONSOLE) {
+		} else if (platform == Platform.CONSOLE) {
 			// todo
 		}
 	}

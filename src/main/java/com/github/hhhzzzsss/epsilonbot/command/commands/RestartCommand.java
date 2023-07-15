@@ -16,14 +16,17 @@ public class RestartCommand extends ChatCommand {
     public String getName() {
         return "restart";
     }
+
     @Override
     public String[] getSyntax() {
         return new String[0];
     }
+
     @Override
     public String getDescription() {
         return "Restarts the bot";
     }
+
     @Override
     public int getDefaultPermission() {
         return 1;

@@ -1,11 +1,9 @@
 package com.github.hhhzzzsss.epsilonbot.block;
 
-import com.github.hhhzzzsss.epsilonbot.util.Vec3i;
 import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.tag.builtin.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import org.cloudburstmc.math.vector.Vector3i;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -47,7 +45,9 @@ public class Section {
 
 		String[] paletteArr = new String[palette.size()];
 		int bpb = 1;
-		while (palette.size() >> bpb > 0) {bpb++;}
+		while (palette.size() >> bpb > 0) {
+			bpb++;
+		}
 		for (Tag paletteEntry : palette) {
 			IntTag intEntry = (IntTag) paletteEntry;
 			paletteArr[intEntry.getValue()] = intEntry.getName();
@@ -113,13 +113,13 @@ public class Section {
 		return y*xdim*zdim + z*xdim + x;
 	}
 	
-	public Vec3i decomposeIndex(int index) {
+	public Vector3i decomposeIndex(int index) {
 		int x = index % xdim;
 		index /= xdim;
 		int z = index % zdim;
 		index /= zdim;
 		int y = index;
-		return new Vec3i(x, y, z);
+		return Vector3i.from(x, y, z);
 	}
 	
 //	@AllArgsConstructor
@@ -137,7 +137,7 @@ public class Section {
 //			if (!hasFlag(SectionFlag.FILLAIR) && getBlock(i).equals("air")) continue;
 //
 //			int blockId = blocks[i];
-//			Vec3i xyz = decomposeIndex(i);
+//			Vector3i xyz = decomposeIndex(i);
 //			Subdivision subdiv = new Subdivision(xyz.getX(), xyz.getY(), xyz.getZ(), xyz.getX(), xyz.getY(), xyz.getZ(), blockId);
 //			boolean canExpandX = true;
 //			boolean canExpandY = true;
@@ -251,7 +251,7 @@ public class Section {
 //			}
 //		}
 //		if (index < size()) {
-//			Vec3i xyz = decomposeIndex(index);
+//			Vector3i xyz = decomposeIndex(index);
 //			xyz = xyz.offset(xorig, yorig, zorig);
 //			if (hasFlag(SectionFlag.HCENTERED) || hasFlag(SectionFlag.CENTERED)) {
 //				xyz = xyz.offset(-xdim/2, 0, -zdim/2);

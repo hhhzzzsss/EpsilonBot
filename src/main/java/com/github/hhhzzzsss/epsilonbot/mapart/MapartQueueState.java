@@ -31,7 +31,8 @@ public class MapartQueueState {
     public static List<MapartQueueState> loadQueueStates() throws IOException {
         if (Files.exists(QUEUE_STATE_PATH)) {
             Reader indexReader = Files.newBufferedReader(QUEUE_STATE_PATH);
-            Type queueStateListType = new TypeToken<ArrayList<MapartQueueState>>(){}.getType();
+			Type queueStateListType = new TypeToken<ArrayList<MapartQueueState>>() {
+			}.getType();
             List<MapartQueueState> queueStates = gson.fromJson(indexReader, queueStateListType);
             indexReader.close();
             return queueStates;

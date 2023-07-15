@@ -1,7 +1,10 @@
 package com.github.hhhzzzsss.epsilonbot.modules;
 
 import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
-import com.github.hhhzzzsss.epsilonbot.listeners.*;
+import com.github.hhhzzzsss.epsilonbot.listeners.DisconnectListener;
+import com.github.hhhzzzsss.epsilonbot.listeners.PacketListener;
+import com.github.hhhzzzsss.epsilonbot.listeners.TickListener;
+import com.github.hhhzzzsss.epsilonbot.util.ChatUtils;
 import com.github.steveice10.mc.protocol.data.game.ClientCommand;
 import com.github.steveice10.mc.protocol.data.game.command.CommandNode;
 import com.github.steveice10.mc.protocol.data.game.entity.EntityEvent;
@@ -67,13 +70,11 @@ public class StateManager implements PacketListener, TickListener, DisconnectLis
         	if (t_packet.getNotification() == GameEvent.CHANGE_GAMEMODE) {
         		gamemode = (GameMode) t_packet.getValue();
         	}
-        }
-		else if (packet instanceof ClientboundLoginPacket) {
+		} else if (packet instanceof ClientboundLoginPacket) {
 			ClientboundLoginPacket t_packet = (ClientboundLoginPacket) packet;
 			entityId = t_packet.getEntityId();
 			gamemode = t_packet.getGameMode();
 			worldName = t_packet.getWorldName();
-			System.out.println(worldName);
 
 			// Send client information
 			List<SkinPart> skinParts = new ArrayList<>();
@@ -86,25 +87,20 @@ public class StateManager implements PacketListener, TickListener, DisconnectLis
 			skinParts.add(SkinPart.HAT);
 			bot.sendPacket(new ServerboundClientInformationPacket(
 					"en-us", 16, ChatVisibility.FULL, true, skinParts, HandPreference.RIGHT_HAND, false, true));
-		}
-		else if (packet instanceof ClientboundEntityEventPacket) {
+		} else if (packet instanceof ClientboundEntityEventPacket) {
 			ClientboundEntityEventPacket t_packet = (ClientboundEntityEventPacket) packet;
 			if (t_packet.getEntityId() == entityId) {
-				if (t_packet.getStatus() == EntityEvent.PLAYER_OP_PERMISSION_LEVEL_0) {
+				if (t_packet.getEvent() == EntityEvent.PLAYER_OP_PERMISSION_LEVEL_0) {
 					opped = false;
-				}
-				else if (t_packet.getStatus() == EntityEvent.PLAYER_OP_PERMISSION_LEVEL_4) {
+				} else if (t_packet.getEvent() == EntityEvent.PLAYER_OP_PERMISSION_LEVEL_4) {
 					opped = true;
 				}
 			}
-		}
-		else if (packet instanceof ClientboundRespawnPacket) {
+		} else if (packet instanceof ClientboundRespawnPacket) {
 			ClientboundRespawnPacket t_packet = (ClientboundRespawnPacket) packet;
 			gamemode = t_packet.getGamemode();
 			worldName = t_packet.getWorldName();
-			System.out.println(worldName);
-		}
-		else if (packet instanceof ClientboundCommandsPacket) {
+		} else if (packet instanceof ClientboundCommandsPacket) {
 			ClientboundCommandsPacket t_packet = (ClientboundCommandsPacket) packet;
 			boolean wasOnFreedomServer = onFreedomServer;
 			onFreedomServer = false;
@@ -127,7 +123,7 @@ public class StateManager implements PacketListener, TickListener, DisconnectLis
 			}
 		} else if (packet instanceof ClientboundOpenScreenPacket) {
 			ClientboundOpenScreenPacket t_packet = (ClientboundOpenScreenPacket) packet;
-			if (!onFreedomServer && t_packet.getName().contains("Server Selector")) {
+			if (!onFreedomServer && ChatUtils.getFullText(t_packet.getTitle()).contains("Server Selector")) {
 				bot.sendPacket(new ServerboundContainerClickPacket(
 						t_packet.getContainerId(),
 						0,
@@ -164,7 +160,7 @@ public class StateManager implements PacketListener, TickListener, DisconnectLis
 		nextRectifyTime = currentTime;
 		if (!onFreedomServer && currentTime >= nextServerJoinTime) {
 			bot.sendPacket(new ServerboundSetCarriedItemPacket(0));
-			bot.sendPacket(new ServerboundUseItemPacket(Hand.MAIN_HAND));
+			bot.sendPacket(new ServerboundUseItemPacket(Hand.MAIN_HAND, 0));
 			if (currentTime-lastTimeOnServer > 10*1000) {
 				nextServerJoinTime = currentTime + 10*1000;
 			}
@@ -184,11 +180,9 @@ public class StateManager implements PacketListener, TickListener, DisconnectLis
 		if (autoGamemode && gamemode != targetGamemode) {
 			if (targetGamemode == GameMode.SURVIVAL) {
 				bot.sendCommand("/gms");
-			}
-			else if (targetGamemode == GameMode.CREATIVE) {
+			} else if (targetGamemode == GameMode.CREATIVE) {
 				bot.sendCommand("/gmc");
-			}
-			else if (targetGamemode == GameMode.ADVENTURE) {
+			} else if (targetGamemode == GameMode.ADVENTURE) {
 				bot.sendCommand("/gma");
 			}
 			// Spectator not supported

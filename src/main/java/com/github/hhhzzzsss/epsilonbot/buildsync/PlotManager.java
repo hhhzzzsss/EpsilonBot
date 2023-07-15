@@ -13,7 +13,6 @@ import java.io.Writer;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.HashMap;
 
 public class PlotManager {
@@ -25,12 +24,12 @@ public class PlotManager {
             .registerTypeAdapter(PlotCoord.class, new PlotCoord.PlotCoordDeserializer())
             .create();
 
-    @Getter @Setter
-    public static class BuildStatus {
+	@Getter @Setter public static class BuildStatus {
         public boolean inProgress = false;
         public boolean built = false;
     }
-    @Getter public static HashMap<PlotCoord, Plot> plotMap = new HashMap<>();
+
+	@Getter public static HashMap<PlotCoord, Plot> plotMap = new HashMap<>();
     public static HashMap<PlotCoord, BuildStatus> buildStatusMap = new HashMap<>();
 
     static {
@@ -54,7 +53,8 @@ public class PlotManager {
     public static void loadBuildStatus() throws IOException {
         if (Files.exists(STATUS_PATH)) {
             Reader indexReader = Files.newBufferedReader(STATUS_PATH);
-            Type typeToken = new TypeToken<HashMap<PlotCoord, BuildStatus>>() { }.getType();
+			Type typeToken = new TypeToken<HashMap<PlotCoord, BuildStatus>>() {
+			}.getType();
             buildStatusMap = gson.fromJson(indexReader, typeToken);
             indexReader.close();
         }
@@ -76,7 +76,8 @@ public class PlotManager {
     public static void loadIndex() throws IOException {
         if (Files.exists(INDEX_PATH)) {
             Reader indexReader = Files.newBufferedReader(INDEX_PATH);
-            Type typeToken = new TypeToken<HashMap<PlotCoord, Plot>>() { }.getType();
+			Type typeToken = new TypeToken<HashMap<PlotCoord, Plot>>() {
+			}.getType();
             plotMap = gson.fromJson(indexReader, typeToken);
             indexReader.close();
         }

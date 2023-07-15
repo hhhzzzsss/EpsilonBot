@@ -1,7 +1,6 @@
 package com.github.hhhzzzsss.epsilonbot.util;
 
 import com.github.hhhzzzsss.epsilonbot.Config;
-import com.github.hhhzzzsss.epsilonbot.buildsync.PlotBuilderSession;
 import com.github.hhhzzzsss.epsilonbot.buildsync.PlotCoord;
 
 public class PlotUtils {

@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.Data;
-import lombok.Getter;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -25,6 +24,7 @@ public class ItemUtils {
 	
 	private static ItemData[] items;
 	private static HashMap<String, ItemData> itemsByName = new HashMap<>();
+
 	static {
 		InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("items.json");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));

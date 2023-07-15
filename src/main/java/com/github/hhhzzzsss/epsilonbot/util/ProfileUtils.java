@@ -1,7 +1,6 @@
 package com.github.hhhzzzsss.epsilonbot.util;
 
 import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +10,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -32,6 +30,7 @@ public class ProfileUtils {
 //        @SerializedName("username_history")
 //        ArrayList<UsernameHistoryEntry> usernameHistory;
     }
+
     public static PlayerProfileResponse getPlayerProfile(String identifier) throws IOException, NoSuchAlgorithmException, KeyManagementException {
         URL url = new URL("https://api.ashcon.app/mojang/v2/user/" + identifier);
         InputStreamReader isr = new InputStreamReader(DownloadUtils.DownloadToOutputStream(url, 1024*1024));
@@ -50,16 +49,18 @@ public class ProfileUtils {
     @RequiredArgsConstructor
     private static class NameQueryThread extends Thread {
         private final UUID uuid;
-        @Getter String result = null;
+		@Getter String result = null;
 
         @Override
         public void run() {
             System.out.println("run() called");
             try {
                 result = ProfileUtils.getPlayerProfile(uuid.toString()).getUsername();
-            } catch (Exception e) {}
+			} catch (Exception e) {
+			}
         }
     }
+
     public static List<String> parallelNameQuery(List<UUID> uuids) {
         System.out.println("parallelNameQuery() called");
         List<NameQueryThread> threads = uuids.stream().map((uuid) -> new NameQueryThread(uuid)).collect(Collectors.toList());
@@ -69,7 +70,8 @@ public class ProfileUtils {
         for (NameQueryThread thread : threads) {
             try {
                 thread.join();
-            } catch (InterruptedException e) {}
+			} catch (InterruptedException e) {
+			}
         }
         return threads.stream().map((thread) -> thread.getResult()).collect(Collectors.toList());
     }

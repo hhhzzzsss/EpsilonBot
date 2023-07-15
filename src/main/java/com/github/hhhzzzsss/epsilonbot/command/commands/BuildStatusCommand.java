@@ -15,14 +15,17 @@ public class BuildStatusCommand extends ChatCommand {
     public String getName() {
         return "buildstatus";
     }
+
     @Override
     public String[] getSyntax() {
         return new String[0];
     }
+
     @Override
     public String getDescription() {
         return "Gets current build status";
     }
+
     @Override
     public int getDefaultPermission() {
         return 0;

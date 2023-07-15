@@ -27,6 +27,7 @@ public class BlockUtils {
 	private static BlockData[] blocks;
 	private static BlockData[] blocksByStateId;
 	private static HashMap<String, BlockData> blocksByName = new HashMap<>();
+
 	static {
 		InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("blocks.json");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -68,6 +69,7 @@ public class BlockUtils {
 	
 	public static int airState = getBlockByName("air").getMinStateId();
 	public static int caveAirState = getBlockByName("cave_air").getMinStateId();
+
 	public static boolean isAir(int state) {
 		return state == airState || state == caveAirState;
 	}

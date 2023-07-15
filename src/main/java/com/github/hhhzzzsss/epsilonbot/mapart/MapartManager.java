@@ -1,7 +1,5 @@
 package com.github.hhhzzzsss.epsilonbot.mapart;
 
-import com.github.hhhzzzsss.epsilonbot.buildsync.PlotCoord;
-import com.github.hhhzzzsss.epsilonbot.buildsync.PlotManager;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.AllArgsConstructor;
@@ -11,15 +9,15 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.net.URL;
 
 public class MapartManager {
     public static final Path INDEX_PATH = Path.of("mapartIndex.json");
     public static Gson gson = new Gson();
-    @Getter private static ArrayList<MapartInfo> mapartIndex = new ArrayList<>();
+	@Getter private static ArrayList<MapartInfo> mapartIndex = new ArrayList<>();
 
     @AllArgsConstructor
     public static class MapartInfo {
@@ -39,7 +37,8 @@ public class MapartManager {
     public static void loadMapartIndex() throws IOException {
         if (Files.exists(INDEX_PATH)) {
             Reader indexReader = Files.newBufferedReader(INDEX_PATH);
-            Type typeToken = new TypeToken<ArrayList<MapartInfo>>() { }.getType();
+			Type typeToken = new TypeToken<ArrayList<MapartInfo>>() {
+			}.getType();
             mapartIndex = gson.fromJson(indexReader, typeToken);
             indexReader.close();
         }

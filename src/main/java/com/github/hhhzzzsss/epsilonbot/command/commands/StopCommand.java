@@ -16,14 +16,17 @@ public class StopCommand extends ChatCommand {
     public String getName() {
         return "stop";
     }
+
     @Override
     public String[] getSyntax() {
         return new String[0];
     }
+
     @Override
     public String getDescription() {
         return "Stops the bot";
     }
+
     @Override
     public int getDefaultPermission() {
         return 2;

@@ -55,15 +55,14 @@ public class MapartBuildState {
     }
 
     // idc about color when reloading so I'm just using a dummy serializer and deserializer to make gson happy
-    public static class ColorSerializer implements JsonSerializer<Color>
-    {
+	public static class ColorSerializer implements JsonSerializer<Color> {
         @Override
         public JsonElement serialize(Color color, Type type, JsonSerializationContext context) throws JsonParseException {
             return new JsonPrimitive(0);
         }
     }
-    public static class ColorDeserializer implements JsonDeserializer<Color>
-    {
+
+	public static class ColorDeserializer implements JsonDeserializer<Color> {
         @Override
         public Color deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext context) throws JsonParseException {
             return Color.BLACK;

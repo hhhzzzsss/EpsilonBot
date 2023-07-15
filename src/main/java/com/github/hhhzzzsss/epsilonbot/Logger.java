@@ -32,8 +32,7 @@ public class Logger {
 		executor.scheduleAtFixedRate(() -> {
 			try {
 				tick();
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}, 0, 50, TimeUnit.MILLISECONDS);
@@ -47,12 +46,10 @@ public class Logger {
 		try {
 			if (!logFile.exists()) {
 				makeNewLogFile();
-			}
-			else if (!logIsCurrent(logFile)) {
+			} else if (!logIsCurrent(logFile)) {
 				compressLogFile();
 				makeNewLogFile();
-			}
-			else {
+			} else {
 				openLogFile();
 			}
 		} catch (IOException e) {
@@ -139,8 +136,7 @@ public class Logger {
 				
 				if (duplicateCounter > 1) {
 					logWriter.write(String.format(" [x%s]\n", duplicateCounter));
-				}
-				else {
+				} else {
 					logWriter.write("\n");
 				}
 				
@@ -155,12 +151,10 @@ public class Logger {
 			
 			if (str.equalsIgnoreCase(prevEntry)) {
 				duplicateCounter++;
-			}
-			else {
+			} else {
 				if (duplicateCounter > 1) {
 					logWriter.write(String.format(" [x%s]\n", duplicateCounter));
-				}
-				else {
+				} else {
 					logWriter.write("\n");
 				}
 				logWriter.write(getTimePrefix() + str.replaceAll("\\[x(\\d+?)\\](?=$|[\r\n])", "[x/$1]")); // the replaceAll will prevent conflicts with the duplicate counter

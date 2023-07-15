@@ -16,16 +16,19 @@ public class ListStaffCommand extends ChatCommand {
     public String getName() {
         return "liststaff";
     }
+
     @Override
     public String[] getSyntax() {
         return new String[]{
                 "[<username>]"
         };
     }
+
     @Override
     public String getDescription() {
         return "Lists people registered by EpsilonBot as staff";
     }
+
     @Override
     public int getDefaultPermission() {
         return 1;

@@ -19,18 +19,22 @@ public class ShowQueueCommand extends ChatCommand {
     public String getName() {
         return "showqueue";
     }
+
     @Override
     public String[] getSyntax() {
         return new String[0];
     }
+
     @Override
     public String getDescription() {
         return "Shows the current mapart queue";
     }
+
     @Override
     public int getDefaultPermission() {
         return 0;
     }
+
     @Override
     public String[] getAliases() {
         return new String[]{"queue", "q"};

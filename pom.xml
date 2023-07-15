@@ -39,7 +39,7 @@
     <dependency>
       <groupId>com.github.Steveice10</groupId>
       <artifactId>MCProtocolLib</artifactId>
-      <version>1.18-3</version>
+            <version>1.20-1</version>
     </dependency>
     <dependency>
       <groupId>com.google.code.gson</groupId>
@@ -94,7 +94,8 @@
             <configuration>
               <shadedArtifactAttached>true</shadedArtifactAttached>
               <transformers>
-                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <mainClass>com.github.hhhzzzsss.epsilonbot.Main</mainClass>
                 </transformer>
               </transformers>

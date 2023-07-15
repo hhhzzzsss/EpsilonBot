@@ -1,8 +1,8 @@
 package com.github.hhhzzzsss.epsilonbot.modules;
 
 import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
-import com.github.hhhzzzsss.epsilonbot.listeners.*;
-import com.github.steveice10.mc.protocol.data.MagicValues;
+import com.github.hhhzzzsss.epsilonbot.listeners.DisconnectListener;
+import com.github.hhhzzzsss.epsilonbot.listeners.PacketListener;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PositionElement;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerPositionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.ServerboundAcceptTeleportationPacket;
@@ -50,7 +50,7 @@ public class PositionManager implements PacketListener, DisconnectListener {
 			ClientboundPlayerPositionPacket t_packet = (ClientboundPlayerPositionPacket) packet;
 			boolean[] relFlags = new boolean[5];
 			for (PositionElement element : t_packet.getRelative()) {
-				relFlags[MagicValues.value(Integer.class, element)] = true;
+				relFlags[element.ordinal()] = true;
 			}
         	x = relFlags[0] ? x+t_packet.getX() : t_packet.getX();
         	y = relFlags[1] ? y+t_packet.getY() : t_packet.getY();
