@@ -5,10 +5,10 @@ import com.github.hhhzzzsss.epsilonbot.block.World;
 import com.github.hhhzzzsss.epsilonbot.build.action.*;
 import com.github.hhhzzzsss.epsilonbot.modules.PositionManager;
 import com.github.hhhzzzsss.epsilonbot.util.BlockUtils;
-import com.github.hhhzzzsss.epsilonbot.util.Vec3d;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundSetCreativeModeSlotPacket;
 import lombok.Getter;
+import org.cloudburstmc.math.vector.Vector3d;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -82,40 +82,40 @@ public abstract class BuilderSession {
 
     protected void processMove(MoveAction action) {
         PositionManager posManager = bot.getPosManager();
-        Vec3d actionPos = new Vec3d(action.x, action.y, action.z);
-        Vec3d currentPos = new Vec3d(posManager.getX(), posManager.getY(), posManager.getZ());
-        Vec3d targetPos;
-        if (action.yPriority && currentPos.y != action.y) {
-            if (Math.abs(action.y - currentPos.y) <= 2.5) {
-                targetPos = new Vec3d(currentPos.x, action.y, currentPos.z);
-            } else if (action.y > currentPos.y) {
-                targetPos = new Vec3d(currentPos.x, currentPos.y+2.5, currentPos.z);
+        Vector3d actionPos = Vector3d.from(action.x, action.y, action.z);
+        Vector3d currentPos = Vector3d.from(posManager.getX(), posManager.getY(), posManager.getZ());
+        Vector3d targetPos;
+        if (action.yPriority && currentPos.getY() != action.y) {
+            if (Math.abs(action.y - currentPos.getY()) <= 2.5) {
+                targetPos = Vector3d.from(currentPos.getX(), action.y, currentPos.getZ());
+            } else if (action.y > currentPos.getY()) {
+                targetPos = Vector3d.from(currentPos.getX(), currentPos.getY()+2.5, currentPos.getZ());
             } else {
-                targetPos = new Vec3d(currentPos.x, currentPos.y-2.5, currentPos.z);
+                targetPos = Vector3d.from(currentPos.getX(), currentPos.getY()-2.5, currentPos.getZ());
             }
         } else {
-            Vec3d difVec = actionPos.subtract(currentPos);
+            Vector3d difVec = actionPos.sub(currentPos);
             if (difVec.lengthSquared() > 9) {
-                targetPos = currentPos.add(difVec.normalize().multiply(3));
+                targetPos = currentPos.add(difVec.normalize().mul(3));
             } else {
                 targetPos = actionPos;
             }
         }
         // Block intersection bounds
         World world = bot.getWorld();
-        int minIX = (int) Math.floor(targetPos.x - 0.3);
-        int maxIX = (int) Math.floor(targetPos.x + 0.3);
-        int minIZ = (int) Math.floor(targetPos.z - 0.3);
-        int maxIZ = (int) Math.floor(targetPos.z + 0.3);
-        int minIY = (int) Math.floor(targetPos.y);
-        int maxIY = (int) Math.floor(targetPos.y + 1.8);
+        int minIX = (int) Math.floor(targetPos.getX() - 0.3);
+        int maxIX = (int) Math.floor(targetPos.getX() + 0.3);
+        int minIZ = (int) Math.floor(targetPos.getZ() - 0.3);
+        int maxIZ = (int) Math.floor(targetPos.getZ() + 0.3);
+        int minIY = (int) Math.floor(targetPos.getY());
+        int maxIY = (int) Math.floor(targetPos.getY() + 1.8);
         for (int y = minIY; y <= maxIY && y < 256; y++) {
             for (int z = minIZ; z <= maxIZ; z++) {
                 for (int x = minIX; x <= maxIX; x++) {
                     if (!BlockUtils.isAir(world.getBlock(x, y, z))) {
                         if (action.breaking) {
                             world.breakBlock(x, y, z);
-                        } else if (actionPos.subtract(currentPos).length() > 1) {
+                        } else if (actionPos.sub(currentPos).length() > 1) {
                             tryTeleport((int) Math.floor(action.x), (int) Math.floor(action.y), (int) Math.floor(action.z));
                         } else {
                             actionQueue.poll();
@@ -125,7 +125,7 @@ public abstract class BuilderSession {
                 }
             }
         }
-        posManager.move(targetPos.x, targetPos.y, targetPos.z);
+        posManager.move(targetPos.getX(), targetPos.getY(), targetPos.getZ());
         if (targetPos.equals(actionPos)) {
             actionQueue.poll();
         }

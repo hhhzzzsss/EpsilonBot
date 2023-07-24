@@ -31,6 +31,8 @@ public class Config {
     String commandPrefix = "`";
     ArrayList<String> alternatePrefixes;
     String warpName = "epsilon_mapart";
+    String staffKey = "";
+    String trustedKey = "";
     ArrayList<String> trusted;
 
     static {

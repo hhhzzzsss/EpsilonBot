@@ -1,8 +1,7 @@
 package com.github.hhhzzzsss.epsilonbot.block;
 
+import com.github.steveice10.mc.protocol.codec.MinecraftCodec;
 import com.github.steveice10.mc.protocol.data.game.chunk.ChunkSection;
-import com.github.steveice10.packetlib.io.NetInput;
-import com.github.steveice10.packetlib.tcp.io.ByteBufNetInput;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import lombok.Getter;
@@ -20,11 +19,10 @@ public class ChunkColumn {
 		this.pos = chunkPos;
 		this.minY = minY;
 		ByteBuf byteBuf = Unpooled.wrappedBuffer(data);
-		NetInput in = new ByteBufNetInput(byteBuf);
 		int numSections = -Math.floorDiv(-worldHeight, 16);
 		chunks = new ChunkSection[numSections];
 		for (int i=0; i<numSections; i++) {
-			chunks[i] = ChunkSection.read(in, 15);
+			chunks[i] = MinecraftCodec.CODEC.getHelperFactory().get().readChunkSection(byteBuf, 0);
 		}
 	}
 	

@@ -122,7 +122,7 @@ public class MapartBuilderSession extends BuilderSession {
 
         // Check for chunk loading
         if (!allChunksLoaded()) {
-            return;
+        //    return;
         }
 
         if (!tileLoaded) {
@@ -159,6 +159,9 @@ public class MapartBuilderSession extends BuilderSession {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+                bot.getWorld().sequence = 0;
+                bot.getWorld().sequenceMap.clear();
 
                 String warpName = Config.getConfig().getWarpName();
                 if (!warpName.equals("")) {
