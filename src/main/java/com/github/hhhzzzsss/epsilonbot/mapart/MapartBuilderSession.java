@@ -122,7 +122,7 @@ public class MapartBuilderSession extends BuilderSession {
 
         // Check for chunk loading
         if (!allChunksLoaded()) {
-        //    return;
+            return;
         }
 
         if (!tileLoaded) {
