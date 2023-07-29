@@ -50,7 +50,7 @@ public class ChatCommandHandler implements PacketListener {
 			msgSender = m.group(1);
 			username = msgSender;
 			command = m.group(3);
-			args = m.group(4);
+			args = m.group(4).trim();
 		} else if ((m = chatCommandPattern.matcher(strMessage)).matches()) {
 			username = m.group(1);
 			command = m.group(2);
