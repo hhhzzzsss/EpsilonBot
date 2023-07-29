@@ -115,7 +115,7 @@ public class ChatCommandHandler implements PacketListener {
 	
 	public void runCommand(UUID uuid, String username, String msgSender, String commandPrefixed, String args) throws CommandException {
 		String commandName = prefixPattern.matcher(commandPrefixed).replaceAll("");
-		if (commandName == null) {
+		if (commandName.length() == 0) {
 			return;
 		}
 		Command command = commandList.get(commandName.toLowerCase());
