@@ -70,9 +70,9 @@ public class ChatCommandHandler implements PacketListener {
 		}
 		catch (CommandException e) {
 			if (msgSender == null) {
-				bot.sendChat("Error - " + e.getMessage());
+				bot.sendChat("Error: " + e.getMessage());
 			} else {
-				bot.sendMsg("Error - " + e.getMessage(), msgSender);
+				bot.sendMsg("Error: " + e.getMessage(), msgSender);
 			}
 		}
 	}
@@ -104,7 +104,7 @@ public class ChatCommandHandler implements PacketListener {
 			try {
 				runCommand(uuid, strName, null, command, args);
 			} catch (CommandException e) {
-				bot.sendChat("Error - " + e.getMessage());
+				bot.sendChat("Error: " + e.getMessage());
 			}
 		} else if (packet instanceof ClientboundDisguisedChatPacket t_packet) {
 			handleFullChat(t_packet.getMessage());
@@ -115,19 +115,35 @@ public class ChatCommandHandler implements PacketListener {
 	
 	public void runCommand(UUID uuid, String username, String msgSender, String commandPrefixed, String args) throws CommandException {
 		String commandName = prefixPattern.matcher(commandPrefixed).replaceAll("");
+		if (commandName == null) {
+			return;
+		}
 		Command command = commandList.get(commandName.toLowerCase());
 		if (command == null) {
-			throw new CommandException("Unknown command: " + commandPrefixed);
+			throw new CommandException("Unknown command - " + commandName);
 		}
 		if (!(command instanceof ChatCommand)) {
 			throw new CommandException("This command cannot be run from Minecraft chat");
 		}
 
 		int permission = 0;
-		if (Config.getConfig().getTrusted().contains(uuid.toString())) {
-			permission = 2;
-		} else if (ModerationManager.isStaff(uuid)) {
-			permission = 1;
+		if (msgSender != null) {
+			for (PlayerListTracker.PlayerData playerData : bot.getPlayerListTracker().getPlayerList().values()) {
+				if (playerData.getName().equals(msgSender)) {
+					if (Config.getConfig().getTrusted().contains(playerData.getUUID().toString())) {
+						permission = 2;
+					} else if (ModerationManager.isStaff(playerData.getUUID())) {
+						permission = 1;
+					}
+					break;
+				}
+			}
+		} else {
+			if (Config.getConfig().getTrusted().contains(uuid.toString())) {
+				permission = 2;
+			} else if (ModerationManager.isStaff(uuid)) {
+				permission = 1;
+			}
 		}
 		
 		String trustedKey = Config.getConfig().getTrustedKey();

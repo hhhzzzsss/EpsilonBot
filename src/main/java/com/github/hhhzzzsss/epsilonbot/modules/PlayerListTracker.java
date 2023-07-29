@@ -17,6 +17,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 
+import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.UUID;

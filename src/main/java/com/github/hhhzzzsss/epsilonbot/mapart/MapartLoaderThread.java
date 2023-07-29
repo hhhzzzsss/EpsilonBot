@@ -56,7 +56,7 @@ public class MapartLoaderThread extends Thread {
 		}
 
 		if (img == null) {
-			exception = new IOException("Error - failed to load as image");
+			exception = new IOException("Error: failed to load as image");
 			return;
 		}
 		

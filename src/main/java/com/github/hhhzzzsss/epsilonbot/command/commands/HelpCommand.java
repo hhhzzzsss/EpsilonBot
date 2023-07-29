@@ -45,7 +45,7 @@ public class HelpCommand extends ChatCommand {
         } else {
             Command command = bot.getCommandList().get(args.split(" ", 2)[0].toLowerCase());
             if (command == null) {
-                throw new CommandException("Unknown command: " + args);
+                throw new CommandException("Unknown command - " + args);
             }
             StringBuilder sb = new StringBuilder();
             if (command.getPermission() > 0) {

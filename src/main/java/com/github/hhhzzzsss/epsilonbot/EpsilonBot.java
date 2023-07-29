@@ -79,7 +79,7 @@ public class EpsilonBot {
 			protocol = Auth.login(Config.getConfig().getUsername(), Config.getConfig().getPassword(), Config.getConfig().getAuthType());
 			System.out.println("Successfully authenticated user.");
 		} catch (Throwable e) {
-			chatLogger.log("Error - failed to authenticate user: " + e.getMessage() + ". Restarting...");
+			chatLogger.log("Error: failed to authenticate user - " + e.getMessage() + ". Restarting...");
 			Main.restartBot();
 			return;
 		}
