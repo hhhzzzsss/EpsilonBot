@@ -5,8 +5,10 @@ import com.github.hhhzzzsss.epsilonbot.Logger;
 import com.github.hhhzzzsss.epsilonbot.listeners.DisconnectListener;
 import com.github.hhhzzzsss.epsilonbot.listeners.PacketListener;
 import com.github.hhhzzzsss.epsilonbot.util.ChatUtils;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundChatPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDisguisedChatPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundPlayerChatPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundSystemChatPacket;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.Getter;
@@ -26,13 +28,25 @@ public class ChatLogger implements PacketListener, DisconnectListener {
 		if (packet instanceof ClientboundLoginPacket) {
 			log(String.format("Successfully logged in to %s:%d", bot.getHost(), bot.getPort()));
 		}
-		else if (packet instanceof ClientboundChatPacket) {
-			ClientboundChatPacket t_packet = (ClientboundChatPacket) packet;
-			String fullText = ChatUtils.getFullText(t_packet.getMessage());
+		else if (packet instanceof ClientboundSystemChatPacket) {
+			ClientboundSystemChatPacket t_packet = (ClientboundSystemChatPacket) packet;
+			String fullText = ChatUtils.getFullText(t_packet.getContent());
 			if (fullText.equals("") || fullText.startsWith("Command set: ")) {
 				return;
 			}
 			log(fullText);
+		}
+		else if (packet instanceof ClientboundDisguisedChatPacket) {
+			ClientboundDisguisedChatPacket t_packet = (ClientboundDisguisedChatPacket) packet;
+			log(ChatUtils.getFullText(t_packet.getMessage()));
+		}
+		else if (packet instanceof ClientboundPlayerChatPacket) {
+			ClientboundPlayerChatPacket t_packet = (ClientboundPlayerChatPacket) packet;
+			if (t_packet.getUnsignedContent() != null) {
+				log(ChatUtils.getFullText(t_packet.getUnsignedContent()));
+			} else {
+				log("<" + ChatUtils.getFullText(t_packet.getName()) + "> " + t_packet.getContent());
+			}
 		}
 	}
 

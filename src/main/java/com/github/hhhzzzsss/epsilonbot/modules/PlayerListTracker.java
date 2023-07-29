@@ -7,7 +7,8 @@ import com.github.steveice10.mc.auth.data.GameProfile;
 import com.github.steveice10.mc.protocol.data.game.PlayerListEntry;
 import com.github.steveice10.mc.protocol.data.game.PlayerListEntryAction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundPlayerInfoPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundPlayerInfoRemovePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundPlayerInfoUpdatePacket;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
 import com.github.steveice10.packetlib.packet.Packet;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -26,30 +28,35 @@ public class PlayerListTracker implements PacketListener, DisconnectListener {
 
 	@Override
 	public void onPacket(Packet packet) {
-		if (packet instanceof ClientboundPlayerInfoPacket) {
-			ClientboundPlayerInfoPacket t_packet = (ClientboundPlayerInfoPacket) packet;
+		if (packet instanceof ClientboundPlayerInfoUpdatePacket) {
+			ClientboundPlayerInfoUpdatePacket t_packet = (ClientboundPlayerInfoUpdatePacket) packet;
+			EnumSet<PlayerListEntryAction> actions = t_packet.getActions();
+
 			for (PlayerListEntry entry : t_packet.getEntries()) {
         		UUID uuid = entry.getProfile().getId();
-				if (t_packet.getAction() == PlayerListEntryAction.ADD_PLAYER) {
+				if (actions.contains(PlayerListEntryAction.ADD_PLAYER)) {
             		playerList.put(uuid, PlayerData.fromEntry(entry));
 				}
 				else if (!playerList.containsKey(uuid)) {
 					//System.err.println("Server tried to modify nonexistent player entry! This should not happen.");
 					continue;
 				}
-				else if (t_packet.getAction() == PlayerListEntryAction.UPDATE_GAMEMODE) {
+				else if (actions.contains(PlayerListEntryAction.UPDATE_GAME_MODE)) {
 					playerList.get(uuid).setGameMode(entry.getGameMode());
 				}
-				else if (t_packet.getAction() == PlayerListEntryAction.UPDATE_LATENCY) {
-					playerList.get(uuid).setPing(entry.getPing());
+				else if (actions.contains(PlayerListEntryAction.UPDATE_LATENCY)) {
+					playerList.get(uuid).setPing(entry.getLatency());
 				}
-				else if (t_packet.getAction() == PlayerListEntryAction.UPDATE_DISPLAY_NAME) {
+				else if (actions.contains(PlayerListEntryAction.UPDATE_DISPLAY_NAME)) {
 					playerList.get(uuid).setDisplayName(entry.getDisplayName());
 				}
-				else if (t_packet.getAction() == PlayerListEntryAction.REMOVE_PLAYER) {
-					playerList.remove(uuid);
-				}
         	}
+		} 
+		else if (packet instanceof ClientboundPlayerInfoRemovePacket) {
+			ClientboundPlayerInfoRemovePacket t_packet = (ClientboundPlayerInfoRemovePacket) packet;
+			for (UUID uuid : t_packet.getProfileIds()) {
+				playerList.remove(uuid);
+			}
 		}
 	}
 	
@@ -75,7 +82,7 @@ public class PlayerListTracker implements PacketListener, DisconnectListener {
 		}
 
 		public static PlayerData fromEntry(PlayerListEntry entry) {
-			return new PlayerData(entry.getProfile(), entry.getGameMode(), entry.getPing(), entry.getDisplayName());
+			return new PlayerData(entry.getProfile(), entry.getGameMode(), entry.getLatency(), entry.getDisplayName());
 		}
 	}
 }

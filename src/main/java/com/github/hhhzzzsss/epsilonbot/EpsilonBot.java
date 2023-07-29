@@ -8,6 +8,7 @@ import com.github.hhhzzzsss.epsilonbot.listeners.PacketListener;
 import com.github.hhhzzzsss.epsilonbot.listeners.TickListener;
 import com.github.hhhzzzsss.epsilonbot.modules.*;
 import com.github.hhhzzzsss.epsilonbot.util.Auth;
+import com.github.hhhzzzsss.epsilonbot.util.ChatUtils;
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.data.game.setting.ChatVisibility;
 import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
@@ -221,7 +222,9 @@ public class EpsilonBot {
 		}
 		
 		if (autoRelog) {
-			if (event.getReason().contains("Wait 5 seconds before connecting, thanks! :)") || event.getReason().contains("Connection throttled! Please wait before reconnecting.")) {
+			String reason = ChatUtils.getFullText(event.getReason());
+
+			if (reason.contains("Wait 5 seconds before connecting, thanks! :)") || reason.contains("Connection throttled! Please wait before reconnecting.")) {
 				executor.schedule(() -> {
 					connect();
 				}, 5, TimeUnit.SECONDS);
@@ -278,7 +281,8 @@ public class EpsilonBot {
 	}
 	
 	public void sendChatInstantly(String chat) {
-		sendPacket(new ServerboundChatPacket(chat));
+		// TODO: Support chat signatures
+		sendPacket(new ServerboundChatPacket(chat, System.currentTimeMillis(), 0, null, 0, new BitSet()));
 	}
 	
 	public void stop() {

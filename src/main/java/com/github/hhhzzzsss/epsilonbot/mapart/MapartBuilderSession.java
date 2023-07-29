@@ -160,6 +160,9 @@ public class MapartBuilderSession extends BuilderSession {
                     e.printStackTrace();
                 }
 
+                bot.getWorld().sequence = 0;
+                bot.getWorld().sequenceMap.clear();
+
                 String warpName = Config.getConfig().getWarpName();
                 if (!warpName.equals("")) {
                     if (requester == null) {
