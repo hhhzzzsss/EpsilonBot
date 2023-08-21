@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 public abstract class BuilderSession {
 //    public static final Pattern WE_PROGRESS_PATTERN = Pattern.compile("\\s*You have \\S+ blocks queued. Placing speed: \\S+, \\S+ left.\\s*");
     public static final Pattern WE_CONFIRM_PATTERN = Pattern.compile("");
-    public static final Pattern WE_DONE_PATTERN = Pattern.compile("\\s*(Job \\[\\S+\\] \\S+ - done|\\(FAWE\\) Operation completed \\(\\d+\\)\\.)\\s*");
+    public static final Pattern WE_DONE_PATTERN = Pattern.compile("\\s*(Job \\[\\S+\\] \\S+ - done|\\(FAWE\\) Operation completed \\(\\d+\\)\\.)\\s*|Operation completed \\(\\d+ blocks affected\\)\\.");
 
     public final EpsilonBot bot;
     @Getter private boolean stopped = false;
