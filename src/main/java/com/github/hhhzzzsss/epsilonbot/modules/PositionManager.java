@@ -1,7 +1,8 @@
 package com.github.hhhzzzsss.epsilonbot.modules;
 
 import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
-import com.github.hhhzzzsss.epsilonbot.listeners.*;
+import com.github.hhhzzzsss.epsilonbot.listeners.DisconnectListener;
+import com.github.hhhzzzsss.epsilonbot.listeners.PacketListener;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PositionElement;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerPositionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.ServerboundAcceptTeleportationPacket;

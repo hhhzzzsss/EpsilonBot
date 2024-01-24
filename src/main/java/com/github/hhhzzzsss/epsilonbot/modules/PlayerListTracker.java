@@ -1,6 +1,5 @@
 package com.github.hhhzzzsss.epsilonbot.modules;
 
-import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
 import com.github.hhhzzzsss.epsilonbot.listeners.DisconnectListener;
 import com.github.hhhzzzsss.epsilonbot.listeners.PacketListener;
 import com.github.steveice10.mc.auth.data.GameProfile;
@@ -17,7 +16,6 @@ import lombok.NonNull;
 import lombok.Setter;
 import net.kyori.adventure.text.Component;
 
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.UUID;
@@ -34,7 +32,7 @@ public class PlayerListTracker implements PacketListener, DisconnectListener {
 			EnumSet<PlayerListEntryAction> actions = t_packet.getActions();
 
 			for (PlayerListEntry entry : t_packet.getEntries()) {
-        		UUID uuid = entry.getProfile().getId();
+        		UUID uuid = entry.getProfileId();
 				if (actions.contains(PlayerListEntryAction.ADD_PLAYER)) {
             		playerList.put(uuid, PlayerData.fromEntry(entry));
 				}

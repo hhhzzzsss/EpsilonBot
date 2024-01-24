@@ -1,7 +1,6 @@
 package com.github.hhhzzzsss.epsilonbot.command.commands;
 
 import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
-import com.github.hhhzzzsss.epsilonbot.Main;
 import com.github.hhhzzzsss.epsilonbot.command.ChatCommand;
 import com.github.hhhzzzsss.epsilonbot.command.ChatSender;
 import com.github.hhhzzzsss.epsilonbot.command.CommandException;

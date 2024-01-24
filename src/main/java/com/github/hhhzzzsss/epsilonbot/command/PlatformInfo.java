@@ -1,7 +1,8 @@
 package com.github.hhhzzzsss.epsilonbot.command;
 
 import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
 public class PlatformInfo {
 	public enum Platform {

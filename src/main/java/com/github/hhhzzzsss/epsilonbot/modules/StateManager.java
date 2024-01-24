@@ -1,7 +1,9 @@
 package com.github.hhhzzzsss.epsilonbot.modules;
 
 import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
-import com.github.hhhzzzsss.epsilonbot.listeners.*;
+import com.github.hhhzzzsss.epsilonbot.listeners.DisconnectListener;
+import com.github.hhhzzzsss.epsilonbot.listeners.PacketListener;
+import com.github.hhhzzzsss.epsilonbot.listeners.TickListener;
 import com.github.hhhzzzsss.epsilonbot.util.ChatUtils;
 import com.github.steveice10.mc.protocol.data.game.ClientCommand;
 import com.github.steveice10.mc.protocol.data.game.command.CommandNode;
@@ -15,6 +17,7 @@ import com.github.steveice10.mc.protocol.data.game.inventory.ContainerActionType
 import com.github.steveice10.mc.protocol.data.game.level.notify.GameEvent;
 import com.github.steveice10.mc.protocol.data.game.setting.ChatVisibility;
 import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
+import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundClientInformationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundCommandsPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundRespawnPacket;
@@ -23,7 +26,6 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundOpenScreenPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundGameEventPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientCommandPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientInformationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.inventory.ServerboundContainerClickPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundSetCarriedItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundUseItemPacket;
@@ -72,8 +74,8 @@ public class StateManager implements PacketListener, TickListener, DisconnectLis
 		else if (packet instanceof ClientboundLoginPacket) {
 			ClientboundLoginPacket t_packet = (ClientboundLoginPacket) packet;
 			entityId = t_packet.getEntityId();
-			gamemode = t_packet.getGameMode();
-			worldName = t_packet.getWorldName();
+			gamemode = t_packet.getCommonPlayerSpawnInfo().getGameMode();
+			worldName = t_packet.getCommonPlayerSpawnInfo().getWorldName();
 
 			// Send client information
 			List<SkinPart> skinParts = new ArrayList<>();
@@ -100,8 +102,8 @@ public class StateManager implements PacketListener, TickListener, DisconnectLis
 		}
 		else if (packet instanceof ClientboundRespawnPacket) {
 			ClientboundRespawnPacket t_packet = (ClientboundRespawnPacket) packet;
-			gamemode = t_packet.getGamemode();
-			worldName = t_packet.getWorldName();
+			gamemode = t_packet.getCommonPlayerSpawnInfo().getGameMode();
+			worldName = t_packet.getCommonPlayerSpawnInfo().getWorldName();
 		}
 		else if (packet instanceof ClientboundCommandsPacket) {
 			ClientboundCommandsPacket t_packet = (ClientboundCommandsPacket) packet;

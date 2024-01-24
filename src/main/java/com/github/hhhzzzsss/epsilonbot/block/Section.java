@@ -2,9 +2,7 @@ package com.github.hhhzzzsss.epsilonbot.block;
 
 import com.github.steveice10.opennbt.NBTIO;
 import com.github.steveice10.opennbt.tag.builtin.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import org.cloudburstmc.math.vector.Vector3i;
 
 import java.io.BufferedInputStream;

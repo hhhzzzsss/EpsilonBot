@@ -5,7 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.Data;
-import lombok.Getter;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

@@ -4,7 +4,6 @@ import com.github.hhhzzzsss.epsilonbot.EpsilonBot;
 import com.github.hhhzzzsss.epsilonbot.command.ChatCommand;
 import com.github.hhhzzzsss.epsilonbot.command.ChatSender;
 import com.github.hhhzzzsss.epsilonbot.command.CommandException;
-import com.github.hhhzzzsss.epsilonbot.modules.PlayerListTracker;
 import lombok.RequiredArgsConstructor;
 
 import java.util.stream.Collectors;

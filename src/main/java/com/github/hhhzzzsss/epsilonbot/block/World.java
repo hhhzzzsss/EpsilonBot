@@ -7,6 +7,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockChangeEntry;
+import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundRegistryDataPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundRespawnPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundBlockChangedAckPacket;
@@ -51,21 +52,23 @@ public class World implements PacketListener, DisconnectListener {
 
 	@Override
 	public void onPacket(Packet packet) {
-		if (packet instanceof ClientboundLoginPacket) {
-			ClientboundLoginPacket t_packet = (ClientboundLoginPacket) packet;
+		if (packet instanceof ClientboundRegistryDataPacket) {
+			ClientboundRegistryDataPacket t_packet = (ClientboundRegistryDataPacket) packet;
 			readDimensionRegistry(t_packet.getRegistry());
-			CompoundTag dimensionEntry = dimensionRegistry.get(t_packet.getDimension());
+		} else if (packet instanceof ClientboundLoginPacket) {
+			ClientboundLoginPacket t_packet = (ClientboundLoginPacket) packet;
+			CompoundTag dimensionEntry = dimensionRegistry.get(t_packet.getCommonPlayerSpawnInfo().getDimension());
 			height = ((IntTag)dimensionEntry.get("height")).getValue();
 			minY = ((IntTag)dimensionEntry.get("min_y")).getValue();
-			worldName = t_packet.getWorldName();
+			worldName = t_packet.getCommonPlayerSpawnInfo().getWorldName();
 		} else if (packet instanceof ClientboundRespawnPacket) {
 			ClientboundRespawnPacket t_packet = (ClientboundRespawnPacket) packet;
-			CompoundTag dimensionEntry = dimensionRegistry.get(t_packet.getDimension());
+			CompoundTag dimensionEntry = dimensionRegistry.get(t_packet.getCommonPlayerSpawnInfo().getDimension());
 			height = ((IntTag)dimensionEntry.get("height")).getValue();
 			minY = ((IntTag)dimensionEntry.get("min_y")).getValue();
-			if (!worldName.equals(t_packet.getWorldName())) {
+			if (!worldName.equals(t_packet.getCommonPlayerSpawnInfo().getWorldName())) {
 				chunks.clear();
-				worldName = t_packet.getWorldName();
+				worldName = t_packet.getCommonPlayerSpawnInfo().getWorldName();
 			}
 		} if (packet instanceof ClientboundLevelChunkWithLightPacket) {
 			ClientboundLevelChunkWithLightPacket t_packet = (ClientboundLevelChunkWithLightPacket) packet;

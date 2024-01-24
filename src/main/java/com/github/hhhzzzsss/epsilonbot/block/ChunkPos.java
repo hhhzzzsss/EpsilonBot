@@ -1,6 +1,6 @@
 package com.github.hhhzzzsss.epsilonbot.block;
 
-import lombok.*;
+import lombok.Data;
 
 @Data
 public class ChunkPos {

@@ -1,7 +1,7 @@
 package com.github.hhhzzzsss.epsilonbot.command;
 
 import com.github.hhhzzzsss.epsilonbot.util.ProfileUtils;
-import com.google.gson.*;
+import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import lombok.Getter;
 

@@ -8,8 +8,6 @@ import com.github.steveice10.packetlib.packet.Packet;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 
-import java.util.UUID;
-
 @RequiredArgsConstructor
 public class MiscChatReactionsHandler implements PacketListener {
 

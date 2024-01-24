@@ -1,7 +1,6 @@
 package com.github.hhhzzzsss.epsilonbot.util;
 
 import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +10,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;

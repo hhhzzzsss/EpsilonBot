@@ -1,10 +1,6 @@
 package com.github.hhhzzzsss.epsilonbot.mapart;
 
-import com.github.hhhzzzsss.epsilonbot.buildsync.PlotCoord;
-import com.google.gson.*;
-
 import java.awt.*;
-import java.lang.reflect.Type;
 
 public class BlockElevation {
 	public String block;

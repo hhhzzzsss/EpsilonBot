@@ -8,7 +8,7 @@ import com.github.steveice10.mc.auth.service.AuthenticationService;
 import com.github.steveice10.mc.auth.util.HTTP;
 import com.microsoft.aad.msal4j.*;
 
-import java.io.*;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -16,7 +16,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.regex.Pattern;
 
 // The existing MsaAuthenticationService isn't working, so I made my own version
 public class CustomMsaAuthenticationService extends AuthenticationService {

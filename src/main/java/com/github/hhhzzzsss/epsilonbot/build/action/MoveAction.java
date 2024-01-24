@@ -1,7 +1,5 @@
 package com.github.hhhzzzsss.epsilonbot.build.action;
 
-import lombok.RequiredArgsConstructor;
-
 public class MoveAction extends Action {
     @Override
     public ActionType getActionType() {
