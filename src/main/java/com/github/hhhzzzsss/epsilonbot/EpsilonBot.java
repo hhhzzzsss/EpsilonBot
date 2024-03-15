@@ -57,6 +57,7 @@ public class EpsilonBot {
 	@Getter protected ChatCommandHandler chatCommandHandler = new ChatCommandHandler(this, commandList, Config.getConfig().commandPrefix, Config.getConfig().getAlternatePrefixes());
 	@Getter protected BuildHandler buildHandler = new BuildHandler(this);
 	@Getter protected PlayerListTracker playerListTracker = new PlayerListTracker();
+	@Getter protected PersonalityModule personalityModule = new PersonalityModule(this);
 	
 	public EpsilonBot() {
 		this.host = Config.getConfig().getHost();
@@ -272,6 +273,16 @@ public class EpsilonBot {
 			sendChat(chat);
 		});
 	}
+
+	public void sendChat(String chat, String format) {
+		chatQueue.sendChat(chat, format);
+	}
+
+	public void sendChatAsync(String chat, String format) {
+		executor.submit(() -> {
+			sendChat(chat, format);
+		});
+	}
 	
 	public void sendCommand(String command) {
 		chatQueue.sendCommand(command);
@@ -336,6 +347,8 @@ public class EpsilonBot {
 		commandList.add(new ShowQueueCommand(this));
 		commandList.add(new CancelMapartCommand(this));
 		commandList.add(new ListCommand(this));
+		commandList.add(new PersonalityCommand(this));
+		commandList.add(new InteractCommand(this));
 
 		commandList.add(new AddStaffCommand(this));
 		commandList.add(new RemoveStaffCommand(this));

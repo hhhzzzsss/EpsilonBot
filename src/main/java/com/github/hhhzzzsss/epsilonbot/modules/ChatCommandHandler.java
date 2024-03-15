@@ -41,9 +41,10 @@ public class ChatCommandHandler implements PacketListener {
 		Matcher m;
 		String command;
 		String args;
-		String msgSender = null;
+		String msgSender = null; // obsolete, specifically for /msg on old tf
+		String senderPrefix = null;
 		String username = null;
-		if ((m = msgCommandPattern.matcher(strMessage)).matches()) {
+		if ((m = msgCommandPattern.matcher(strMessage)).matches()) { // obsolete
 			if (!m.group(2).equals("Freedom")) {
 				return;
 			}
@@ -52,21 +53,24 @@ public class ChatCommandHandler implements PacketListener {
 			command = m.group(3);
 			args = m.group(4).trim();
 		} else if ((m = chatCommandPattern.matcher(strMessage)).matches()) {
-			username = m.group(1);
-			command = m.group(2);
-			args = m.group(3).trim();
+			System.out.println("Detected chat command: " + strMessage);
+			senderPrefix = m.group(1);
+			username = m.group(2);
+			command = m.group(3);
+			args = m.group(4).trim();
 			if (username.equalsIgnoreCase(bot.getUsername())) {
 				return;
 			}
 		} else if ((m = discordCommandPattern.matcher(strMessage)).matches()) {
-			command = m.group(1);
-			args = m.group(2).trim();
+			senderPrefix = m.group(1);
+			command = m.group(2);
+			args = m.group(3).trim();
 		} else {
 			return;
 		}
 		
 		try {
-			runCommand(new UUID(0, 0), username, msgSender, command, args);
+			runCommand(new UUID(0, 0), username, msgSender, senderPrefix, command, args);
 		}
 		catch (CommandException e) {
 			if (msgSender == null) {
@@ -90,11 +94,17 @@ public class ChatCommandHandler implements PacketListener {
 
 			String strName = ChatUtils.getFullText(t_packet.getName()).replaceAll("§[0-9a-fklmnor]", "");
 			String strMessage = t_packet.getContent();
+			String strUnsignedMessage = ChatUtils.getFullText(t_packet.getUnsignedContent());
 			
 			Matcher m;
+			String senderPrefix = null;
 			String command;
 			String args;
 			if ((m = commandPattern.matcher(strMessage)).matches()) {
+				int idxOfCommand = strUnsignedMessage.indexOf(strMessage);
+				if (idxOfCommand > 0) {
+					senderPrefix = strUnsignedMessage.substring(0, idxOfCommand);
+				}
 				command = m.group(1);
 				args = m.group(2).trim();
 			} else {
@@ -102,7 +112,7 @@ public class ChatCommandHandler implements PacketListener {
 			}
 
 			try {
-				runCommand(uuid, strName, null, command, args);
+				runCommand(uuid, strName, null, senderPrefix, command, args);
 			} catch (CommandException e) {
 				bot.sendChat("Error: " + e.getMessage());
 			}
@@ -113,7 +123,7 @@ public class ChatCommandHandler implements PacketListener {
 		}
 	}
 	
-	public void runCommand(UUID uuid, String username, String msgSender, String commandPrefixed, String args) throws CommandException {
+	public void runCommand(UUID uuid, String username, String msgSender, String senderPrefix, String commandPrefixed, String args) throws CommandException {
 		String commandName = prefixPattern.matcher(commandPrefixed).replaceAll("");
 		if (commandName.length() == 0) {
 			return;
@@ -165,7 +175,7 @@ public class ChatCommandHandler implements PacketListener {
 			throw new CommandException("You don't have permission to run this command");
 		}
 		
-		((ChatCommand) command).executeChat(new ChatSender(bot, uuid, msgSender, permission), args);
+		((ChatCommand) command).executeChat(new ChatSender(bot, uuid, msgSender, senderPrefix, permission), args);
 	}
 
 	/**
@@ -183,8 +193,8 @@ public class ChatCommandHandler implements PacketListener {
 
 		prefixPattern = Pattern.compile(prefixMatchingString);
 		commandPattern = Pattern.compile(String.format("((?:%s)\\S+)(.*)?", prefixMatchingString));
-		msgCommandPattern = Pattern.compile(String.format("\\| (\\S+) \\((.+?)\\) > You: ((?:%s)\\S+)(.*)?", prefixMatchingString));
-		chatCommandPattern = Pattern.compile(String.format(".*\\b(\\S+)\\s*(?: »|:) +((?:%s)\\S+)(.*)?", prefixMatchingString));
-		discordCommandPattern = Pattern.compile(String.format("\\[Discord\\] .*: ((?:%s)\\S+)(.*)?", prefixMatchingString));
+		msgCommandPattern = Pattern.compile(String.format("\\| (\\S+) \\((.+?)\\) > You: ((?:%s)\\S+)(.*)?", prefixMatchingString)); // obsolete
+		chatCommandPattern = Pattern.compile(String.format("(.*(\\S+)\\s*(?: »|:) )+((?:%s)\\S+)(.*)?", prefixMatchingString));
+		discordCommandPattern = Pattern.compile(String.format("(\\[Discord\\] .*: )((?:`)\\S+)(.*)?(.*)?", prefixMatchingString)); // discord format no longer uses colon, but now this is covered by the chat command pattern
 	}
 }

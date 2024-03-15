@@ -16,3 +16,6 @@ staffKey: '' # if this value is empty, the UUID-based system is used instead
 trustedKey: '' # if this value is empty, the UUID-based system is used instead
 trusted:
   - 5752bde5-bbf7-46e7-8352-59a9d5bc3c2f
+
+personalityServerHost: 'http://localhost:8854'
+personalityServerAuthToken: 'token_goes_here'

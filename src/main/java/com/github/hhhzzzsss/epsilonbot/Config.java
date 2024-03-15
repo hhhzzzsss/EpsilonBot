@@ -33,6 +33,8 @@ public class Config {
     String staffKey = "";
     String trustedKey = "";
     ArrayList<String> trusted;
+    String personalityServerHost = "http://localhost:8854";
+    String personalityServerAuthToken = "put_token_here";
 
     static {
         if (!file.exists()) {

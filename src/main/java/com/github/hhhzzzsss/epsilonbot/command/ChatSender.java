@@ -12,5 +12,6 @@ public class ChatSender {
     private final EpsilonBot bot;
     private final UUID uuid;
     private final String msgSender;
+    private final String senderPrefix;
     private final int permission;
 }
