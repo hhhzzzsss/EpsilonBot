@@ -68,7 +68,7 @@ public class CustomMsaAuthenticationService extends AuthenticationService {
         StepFullJavaSession.FullJavaSession javaSession = null;
         if (msaCache.has(this.username)) {
             try {
-                javaSession = MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.fromJson(msaCache);
+                javaSession = MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.fromJson(msaCache.getAsJsonObject(this.username));
                 javaSession = MinecraftAuth.JAVA_DEVICE_CODE_LOGIN.refresh(httpClient, javaSession);
             } catch (Exception e) {
                 System.out.println("Invalid token for " + this.username + ", will request new device code");
