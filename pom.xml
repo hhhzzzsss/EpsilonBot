@@ -66,6 +66,11 @@
       <artifactId>msal4j</artifactId>
       <version>1.13.9</version>
     </dependency>
+    <dependency>
+      <groupId>net.raphimc</groupId>
+      <artifactId>MinecraftAuth</artifactId>
+      <version>4.0.0</version>
+    </dependency>
   </dependencies>
 
   <build>
